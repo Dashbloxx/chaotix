@@ -1,0 +1,27 @@
+Checks: >
+    -*,
+    bugprone-*,
+    cert-*,
+    clang-analyzer-*,
+    concurrency-*,
+    misc-*,
+    performance-*,
+    portability-*,
+    readability-*,
+    -bugprone-easily-swappable-parameters,
+    -bugprone-reserved-identifier,
+    -cert-dcl37-c,
+    -cert-dcl51-cpp,
+    -cert-err34-c,
+    -concurrency-mt-unsafe,
+    -misc-no-recursion,
+    -performance-no-int-to-ptr,
+    -readability-braces-around-statements,
+    -readability-identifier-length,
+    -readability-magic-numbers,
+    -readability-inconsistent-declaration-parameter-name
+CheckOptions:
+    - key: bugprone-narrowing-conversions.WarnOnIntegerNarrowingConversion
+      value: false
+    - key: readability-function-cognitive-complexity.Threshold
+      value: 100

@@ -1,0 +1,10 @@
+compile_flags.txt
+*.[oad]
+/kernel/kernel
+/base/bin/**
+!/base/**/.gitkeep
+/base/root/src
+/initrd
+/disk/boot/*
+!/disk/boot/grub
+/disk_image
