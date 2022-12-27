@@ -2,5 +2,9 @@
 	"files.exclude": {
 		"**/*.o": true,
 		"**/*.d": true
+	},
+	"files.associations": {
+		"unistd.h": "c",
+		"string.h": "c"
 	}
 }

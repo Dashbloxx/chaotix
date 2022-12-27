@@ -14,9 +14,11 @@ BIN_TARGET_NAMES := \
 	echo \
 	env \
 	fib \
+	gui \
 	halt \
 	imgview \
 	init \
+	getfb \
 	init-test \
 	kill \
 	ln \
