@@ -1,4 +1,4 @@
-![](.assets/logo.png.png)
+![](.assets/logo.png)
 
 # Psychix
 ## What is Psychix?
