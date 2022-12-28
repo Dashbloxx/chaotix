@@ -4,10 +4,13 @@
 ## What is Psychix?
 Psychix is an open-source implementation of UNIX. It borrows code from Xv6, and Yagura. Psychix will be in heavy development to make it something useful and more powerful than other UNIX-like operating systems.
 ## How to build Psychix?
-Simply run `make`. That basically builds Psychix, and then you can test it by running:
-```
-./run.sh
-```
+You'll need the following packages to be able to build Psychix:
+* grub2
+* gcc
+* xorriso
+* qemu (only for testing)
+* cpio
+Then, run the shell script `clean.sh`. This will clean everything for you. Then, run the `build.sh` shell script, which will build the kernel, the userspace binaries, and then make the initrd filesystem. After that, you can run the `run.sh` shell script (optionally) if you want to test Psychix. If you want to make a disk image (.iso) of Psychix, simply run the `cdrom.sh` shell script.
 We're basically assuming that you're running an operating system that runs using the Linux kernel, or an operating system that works nearly like UNIX, aswell as on an architecture that is compatible with the i386 architecture...
 # Plans & checklist
 - [X] Unix sockets
