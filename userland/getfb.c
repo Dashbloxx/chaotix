@@ -10,7 +10,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-int main(int argc, char* argv[]) {
+int main(void) {
     // TODO: Give the option to choose a specific framebuffer, for computers that use multiple screens
     printf("Getting framebuffer address...\n");
     int framebuffer_fd = open("/dev/fb0", O_RDWR);

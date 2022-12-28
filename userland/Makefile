@@ -14,7 +14,6 @@ BIN_TARGET_NAMES := \
 	echo \
 	env \
 	fib \
-	gui \
 	halt \
 	imgview \
 	init \
@@ -66,7 +65,7 @@ LIB_OBJS := \
 
 LIB_DEPS := $(LIB_OBJS:.o=.d)
 
-.PHONY: all clean
+.PHONY: all cleanint argc, char* argv[]
 
 all: $(BIN_TARGETS)
 
@@ -83,7 +82,7 @@ $(LIB_TARGET): $(LIB_OBJS)
 	@$(CC) $(CFLAGS) -MMD -MP -c -o $@ $<
 
 clean:
-	$(RM) $(BIN_TARGETS) $(BIN_TARGET_OBJS) $(BIN_TARGET_DEPS) $(LIB_TARGET) $(LIB_OBJS) $(LIB_DEPS)
+	@$(RM) $(BIN_TARGETS) $(BIN_TARGET_OBJS) $(BIN_TARGET_DEPS) $(LIB_TARGET) $(LIB_OBJS) $(LIB_DEPS)
 
 -include $(BIN_TARGET_DEPS)
 -include $(LIB_DEPS)
