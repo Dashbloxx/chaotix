@@ -27,6 +27,7 @@ We're basically assuming that you're running an operating system that runs using
 - [X] Basic command-line tools including `ls`, `mkdir`, `rm`, `rmdir`, `cat`, `grep`, etc
 - [ ] Window system
 - [ ] Lua ported
+- [ ] Actual access to internet
 - [ ] GCC ported
 - [X] Dedicated developer
 - [X] A good license
