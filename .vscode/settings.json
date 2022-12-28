@@ -11,6 +11,9 @@
 		"string.h": "c",
 		"memory.h": "c",
 		"panic.h": "c",
-		"socket.h": "c"
+		"socket.h": "c",
+		"stdlib.h": "c",
+		"chibicc.h": "c",
+		"cstdlib": "c"
 	}
 }

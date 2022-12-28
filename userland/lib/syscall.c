@@ -170,8 +170,7 @@ int mknod(const char* pathname, mode_t mode, dev_t dev) {
     RETURN_WITH_ERRNO(rc, int)
 }
 
-void* mmap(void* addr, size_t length, int prot, int flags, int fd,
-           off_t offset) {
+void* mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) {
     mmap_params params;
     params.addr = addr;
     params.length = length;
