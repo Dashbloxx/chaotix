@@ -10,11 +10,9 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-static void putpixel(unsigned char* screen, int x, int y, int color, int pixelwidth, int pitch) {
-    unsigned where = x * pixelwidth + y * pitch;
-    screen[where] = color & 255;
-    screen[where + 1] = (color >> 8) & 255;
-    screen[where + 2] = (color >> 16) & 255;
+unsigned int genbufferpos(int x, int y, int pixelwidth, int pitch) {
+    return x * pixelwidth + y * pitch;
+
 }
 
 int main(int argc, char* argv[]) {
@@ -27,14 +25,19 @@ int main(int argc, char* argv[]) {
             perror("open");
         return EXIT_FAILURE;
     }
-    struct fb_info fb_info;
-    if (ioctl(framebuffer_fd, FBIOGET_INFO, &fb_info) < 0) {
+    struct fb_info framebuffer_info;
+    if (ioctl(framebuffer_fd, FBIOGET_INFO, &framebuffer_info) < 0) {
         perror("ioctl");
         close(framebuffer_fd);
         return EXIT_FAILURE;
     }
-    void* framebuffer = mmap(NULL, fb_info.pitch * fb_info.height, PROT_READ | PROT_WRITE, MAP_SHARED, framebuffer_fd, 0);
+    void* framebuffer = mmap(NULL, framebuffer_info.pitch * framebuffer_info.height, PROT_READ | PROT_WRITE, MAP_SHARED, framebuffer_fd, 0);
     close(framebuffer_fd);
     printf("Got framebuffer pointer. Address of it is: %d\n", &framebuffer);
+    memset(framebuffer, 0, framebuffer_info.pitch * framebuffer_info.height);
+    for(int i; i < framebuffer_info.width; i++)
+        for(int k; k < framebuffer_info.height; k++)
+            ((char*)framebuffer)[genbufferpos(i, k, framebuffer_info.bpp, framebuffer_info.pitch)] = 4;
+    getchar();
     return EXIT_SUCCESS;
 }
