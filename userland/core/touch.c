@@ -5,7 +5,8 @@
 
 int main(int argc, char* const argv[]) {
     if (argc < 2) {
-        dprintf(STDERR_FILENO, "Usage: touch FILE...\n");
+        printf("\x1b[37;1medit: \x1b[31;1mfatal error: \x1b[0mthere was an error opening the file...\n");
+        dprintf(STDERR_FILENO, "\x1b[37;1mtouch: \x1b[32;1musage: \x1b[0mtouch FILES...\n");
         return EXIT_FAILURE;
     }
 
