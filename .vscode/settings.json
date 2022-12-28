@@ -1,7 +1,10 @@
 {
 	"files.exclude": {
 		"**/*.o": true,
-		"**/*.d": true
+		"**/*.d": true,
+		".gitignore": true,
+		".clang-tidy": true,
+		".clang-format": true
 	},
 	"files.associations": {
 		"unistd.h": "c",

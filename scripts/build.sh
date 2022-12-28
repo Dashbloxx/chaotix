@@ -2,4 +2,4 @@
 
 (cd kernel;./build.sh)
 (cd userland;./build.sh)
-./initrd.sh
+scripts/initrd.sh

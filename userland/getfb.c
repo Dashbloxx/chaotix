@@ -13,7 +13,7 @@
 int main(void) {
     // TODO: Give the option to choose a specific framebuffer, for computers
     // that use multiple screens
-    printf("Getting framebuffer address...\n");
+    printf("Getting framebuffer address in memory...\n");
     int framebuffer_fd = open("/dev/fb0", O_RDWR);
     if (framebuffer_fd < 0) {
         if (errno == ENOENT)
