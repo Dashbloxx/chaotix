@@ -4,7 +4,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
-        dprintf(STDERR_FILENO, "Usage: mv SOURCE DEST\n");
+        dprintf(STDERR_FILENO, "\x1b[37;1mmv: \x1b[32;1musage: \x1b[0mmv OBJECT-1 OBJECT-2\n");
         return EXIT_FAILURE;
     }
     if (rename(argv[1], argv[2]) < 0) {

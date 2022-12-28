@@ -20,7 +20,7 @@ int main(int argc, char * argv[])
             printf("\x1b[37;1medit: \x1b[31;1mfatal error: \x1b[0mthere was an error opening the file...\n");
         } else
         {
-            printf("\x1b[37;1medit: \x1b[31;1mfatal error: \x1b[0mfile editor is work-in-progress and is not finished yet!\n")
+            printf("\x1b[37;1medit: \x1b[31;1mfatal error: \x1b[0mfile editor is work-in-progress and is not finished yet!\n");
         }
     }
     return EXIT_SUCCESS;
