@@ -35,7 +35,8 @@ typedef union {
 } qoi_rgba_t;
 
 static uint8_t hash(const qoi_rgba_t* c) {
-    return (c->rgba.r * 3 + c->rgba.g * 5 + c->rgba.b * 7 + c->rgba.a * 11) % 64;
+    return (c->rgba.r * 3 + c->rgba.g * 5 + c->rgba.b * 7 + c->rgba.a * 11) %
+           64;
 }
 
 static uint32_t swap_bytes(uint32_t x) {

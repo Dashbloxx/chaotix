@@ -11,7 +11,8 @@
 #include <unistd.h>
 
 int main(void) {
-    // TODO: Give the option to choose a specific framebuffer, for computers that use multiple screens
+    // TODO: Give the option to choose a specific framebuffer, for computers
+    // that use multiple screens
     printf("Getting framebuffer address...\n");
     int framebuffer_fd = open("/dev/fb0", O_RDWR);
     if (framebuffer_fd < 0) {
@@ -27,7 +28,9 @@ int main(void) {
         close(framebuffer_fd);
         return EXIT_FAILURE;
     }
-    void* framebuffer = mmap(NULL, fb_info.pitch * fb_info.height, PROT_READ | PROT_WRITE, MAP_SHARED, framebuffer_fd, 0);
+    void* framebuffer =
+        mmap(NULL, fb_info.pitch * fb_info.height, PROT_READ | PROT_WRITE,
+             MAP_SHARED, framebuffer_fd, 0);
     close(framebuffer_fd);
     printf("Got framebuffer address. Address of it is: %d\n", &framebuffer);
     return EXIT_SUCCESS;

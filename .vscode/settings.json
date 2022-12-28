@@ -5,6 +5,9 @@
 	},
 	"files.associations": {
 		"unistd.h": "c",
-		"string.h": "c"
+		"string.h": "c",
+		"memory.h": "c",
+		"panic.h": "c",
+		"socket.h": "c"
 	}
 }
