@@ -10,7 +10,7 @@ You'll need the following packages to be able to build Psychix:
 * xorriso
 * qemu (only for testing)
 * cpio
-Then, run the shell script `clean.sh`. This will clean everything for you. Then, run the `build.sh` shell script, which will build the kernel, the userspace binaries, and then make the initrd filesystem. After that, you can run the `run.sh` shell script (optionally) if you want to test Psychix. If you want to make a disk image (.iso) of Psychix, simply run the `cdrom.sh` shell script.
+Then, run the shell script `scripts/clean.sh` (run these scripts in the root directory of the project). This will clean everything for you. Then, run the `scripts/build.sh` shell script, which will build the kernel, the userspace binaries, and then make the initrd filesystem. After that, you can run the `scripts/run.sh` shell script (optionally) if you want to test Psychix. If you want to make a disk image (.iso) of Psychix, simply run the `scripts/cdrom.sh` shell script.
 We're basically assuming that you're running an operating system that runs using the Linux kernel, or an operating system that works nearly like UNIX, aswell as on an architecture that is compatible with the i386 architecture...
 # Plans & checklist
 - [X] Unix sockets
