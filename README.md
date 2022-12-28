@@ -8,4 +8,4 @@ Simply run `make`. That basically builds Psychix, and then you can test it by ru
 ```
 ./run.sh
 ```
-We're basically assuming that you're running an operating system that runs using the Linux kernel, or an operating system that works nearly like UNIX.
+We're basically assuming that you're running an operating system that runs using the Linux kernel, or an operating system that works nearly like UNIX, aswell as on an architecture that is compatible with the i386 architecture...
