@@ -1,6 +1,6 @@
-#include "boot_defs.h"
+#include "../../boot_defs.h"
 #define ASM_FILE
-#include "multiboot.h"
+#include "../../multiboot.h"
 
 #define FLAGS (MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_VIDEO_MODE)
 #define CHECKSUM -(MULTIBOOT_HEADER_MAGIC + FLAGS)
