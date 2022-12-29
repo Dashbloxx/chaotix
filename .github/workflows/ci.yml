@@ -23,6 +23,6 @@ jobs:
                 repo_token: ${{ secrets.GITHUB_TOKEN }}
                 file: psychix.iso
                 asset_name: psychix.iso
-                tag: Psychix Release
+                tag: ${{ github.ref }}
                 overwrite: true
                 body: "Psychix latest version; Compiled through cloud..."
