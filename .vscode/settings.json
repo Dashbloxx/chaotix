@@ -14,6 +14,8 @@
 		"socket.h": "c",
 		"stdlib.h": "c",
 		"chibicc.h": "c",
-		"cstdlib": "c"
+		"cstdlib": "c",
+		"compare": "c",
+		"fcntl.h": "c"
 	}
 }

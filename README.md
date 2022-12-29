@@ -1,6 +1,8 @@
 ![](.assets/logo.png)
 
 # Psychix
+# Screenshot(s)
+![](.assets/screenshot.png)
 ## What is Psychix?
 Psychix is an open-source implementation of UNIX. It borrows code from Xv6, and Yagura. Psychix will be in heavy development to make it something useful and more powerful than other UNIX-like operating systems.
 ## How to build Psychix?
@@ -23,6 +25,7 @@ We're basically assuming that you're running an operating system that runs using
 - [X] Initrd, with good & organized filesystem
 - [X] Libc
 - [X] x86 support
+- [ ] x86_64 support (Psychix works on x86_64, but doesn't reach 64-bit mode)
 - [ ] ARM support
 - [X] Basic command-line tools including `ls`, `mkdir`, `rm`, `rmdir`, `cat`, `grep`, etc
 - [ ] Window system

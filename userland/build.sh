@@ -8,6 +8,8 @@ cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextr
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o ../common/strings.o ../common/strings.c
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o ../common/stdio.o ../common/stdio.c
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o ../common/stdlib.o ../common/stdlib.c
+cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o ../common/endian.o ../common/endian.c
+cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o lib/endian.o lib/endian.c
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o lib/crt0.o lib/crt0.c
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o lib/dirent.o lib/dirent.c
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o lib/errno.o lib/errno.c
@@ -50,8 +52,7 @@ cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextr
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o core/wc.o core/wc.c
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o core/xv6-usertests.o core/xv6-usertests.c
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o core/fetch.o core/fetch.c
-cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -MP -c -o core/edit.o core/edit.c
-ar rcs libc.a ../common/math.o ../common/string.o ../common/strings.o ../common/stdio.o ../common/stdlib.o lib/crt0.o lib/dirent.o lib/errno.o lib/panic.o lib/stdio.o lib/stdlib.o lib/string.o lib/syscall.o lib/time.o lib/unistd.o
+ar rcs libc.a ../common/math.o ../common/string.o ../common/strings.o ../common/endian.o ../common/stdio.o ../common/stdlib.o lib/crt0.o lib/dirent.o lib/errno.o lib/panic.o lib/stdio.o lib/stdlib.o lib/endian.o lib/string.o lib/syscall.o lib/time.o lib/unistd.o
 
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -o ../base/bin/cal core/cal.o -lc
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -o ../base/bin/cat core/cat.o -lc
@@ -86,4 +87,3 @@ cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextr
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -o ../base/bin/wc core/wc.o -lc
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -o ../base/bin/xv6-usertests core/xv6-usertests.o -lc
 cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -o ../base/bin/fetch core/fetch.o -lc
-cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -o ../base/bin/edit core/edit.o -lc
