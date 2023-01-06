@@ -46,14 +46,14 @@ static uint32_t swap_bytes(uint32_t x) {
 
 int main(int argc, char* const argv[]) {
     if (argc != 2) {
-        dprintf(STDERR_FILENO, "Usage: imgview FILE\n");
+        dprintf(STDERR_FILENO, "\x1b[37;1mimgview: \x1b[32;1musage: \x1b[0mimgview FILE\n");
         return EXIT_FAILURE;
     }
 
     int fb_fd = open("/dev/fb0", O_RDWR);
     if (fb_fd < 0) {
         if (errno == ENOENT)
-            dprintf(STDERR_FILENO, "Framebuffer is not available\n");
+            dprintf(STDERR_FILENO, "\x1b[37;1mimgview: \x1b[32;1merror: framebuffer error...\n");
         else
             perror("open");
         return EXIT_FAILURE;
@@ -88,7 +88,7 @@ int main(int argc, char* const argv[]) {
     }
     if ((size_t)nread < sizeof(struct qoi_header) ||
         strncmp(header.magic, "qoif", 4) != 0) {
-        dprintf(STDERR_FILENO, "Not a QOI file\n");
+        dprintf(STDERR_FILENO, "\x1b[37;1mimgview: \x1b[32;1merror: \x1b[0minvalid format...\n");
         close(img_fd);
         return EXIT_FAILURE;
     }
