@@ -7,12 +7,12 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
-        dprintf(STDERR_FILENO, "Usage: kill PID\n");
+        dprintf(STDERR_FILENO, "\x1b[37;1mkill: \x1b[32;1musage: \x1b[0mkill PID\n");
         return EXIT_FAILURE;
     }
     const char* pid_str = argv[1];
     if (!str_is_uint(pid_str)) {
-        dprintf(STDERR_FILENO, "Illegal pid: %s\n", pid_str);
+        dprintf(STDERR_FILENO, "\x1b[37;1mkill: \x1b[32;1merror: \x1b[0mIllegal PID: %s\n", pid_str);
         return EXIT_FAILURE;
     }
     pid_t pid = atoi(pid_str);

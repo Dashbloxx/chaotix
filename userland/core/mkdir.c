@@ -5,7 +5,7 @@
 
 int main(int argc, char* const argv[]) {
     if (argc < 2) {
-        dprintf(STDERR_FILENO, "\x1b[37;1mmkdir: \x1b[32;1musage: \x1b[0mMKDIR DIRECTORIE(S)...\n");
+        dprintf(STDERR_FILENO, "\x1b[37;1mmkdir: \x1b[32;1musage: \x1b[0mmkdir DIRECTORIE(S)...\n");
         return EXIT_FAILURE;
     }
     for (int i = 1; i < argc; ++i) {
