@@ -16,6 +16,11 @@
 		"chibicc.h": "c",
 		"cstdlib": "c",
 		"compare": "c",
-		"fcntl.h": "c"
+		"fcntl.h": "c",
+		"system.h": "c",
+		"stat.h": "c",
+		"kprintf.h": "c",
+		"mmio.h": "c",
+		"stdint.h": "c"
 	}
 }
