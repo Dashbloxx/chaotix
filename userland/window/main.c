@@ -29,7 +29,22 @@ int main(void) {
     }
     void * framebuffer = mmap(NULL, framebuffer_info.pitch * framebuffer_info.height, PROT_READ | PROT_WRITE, MAP_SHARED, framebuffer_fd, 0);
     
-    fill_screen(framebuffer, framebuffer_info, 9);
+    for(int x = 0; x < 100; x++)
+    {
+        for(int y = 0; y < 100; y++)
+        {
+            struct draw_info object;
+            object.x = x;
+            object.y = y;
+            object.r = 255;
+            object.g = 0;
+            object.b = 255;
+            draw_pixel(object, framebuffer_info, framebuffer);
+        }
+    }
+
+    while(1)
+    ;
 
     close(framebuffer_fd);
     return EXIT_SUCCESS;
