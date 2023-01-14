@@ -1,7 +1,3 @@
-#include <stddef.h>
-#include <stdint.h>
-
-#if ARCH == 1
 #include "api/sys/stat.h"
 #include "boot_defs.h"
 #include "console/console.h"
@@ -40,13 +36,6 @@ static void create_char_device(const char* pathname, struct inode* device) {
 }
 
 void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
-#endif
-#if ARCH == 2
-#include "memory.h"
-
-void start(uint32_t r0, uint32_t r1, uint32_t atags) {
-#endif
-#if ARCH == 1
     gdt_init();
     idt_init();
     irq_init();
@@ -123,5 +112,4 @@ void start(uint32_t r0, uint32_t r1, uint32_t atags) {
     ASSERT_OK(process_spawn_kernel_process("userland_init", init));
 
     process_exit(0);
-#endif
 }
