@@ -29,19 +29,15 @@ int main(void) {
     }
     void * framebuffer = mmap(NULL, framebuffer_info.pitch * framebuffer_info.height, PROT_READ | PROT_WRITE, MAP_SHARED, framebuffer_fd, 0);
     
-    for(int x = 0; x < 100; x++)
-    {
-        for(int y = 0; y < 100; y++)
-        {
-            struct draw_info object;
-            object.x = x;
-            object.y = y;
-            object.r = 255;
-            object.g = 0;
-            object.b = 255;
-            draw_pixel(object, framebuffer_info, framebuffer);
-        }
-    }
+    struct rectangle_info object;
+    object.x = 1000;
+    object.y = 1000;
+    object.r = 255;
+    object.g = 0;
+    object.b = 255;
+    object.height = 200;
+    object.width = 300;
+    draw_rectangle(object, framebuffer_info, framebuffer);
 
     while(1)
     ;
