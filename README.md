@@ -37,4 +37,4 @@ We're basically assuming that you're running an operating system that runs using
 - [X] A good readme
 - [ ] Exact documentation
 # License
-Although I could rewrite all of the code and change the license, I decided to stick with the license (MIT license), just because its a good and permissive license. See the license at LICENSE. If there are any ports, the license does not apply to them, rather the original software's license does.
+See the license at LICENSE. If there are any ports, the license does not apply to them, rather the original software's license does.
