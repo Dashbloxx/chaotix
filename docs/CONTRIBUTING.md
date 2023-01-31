@@ -1,0 +1,2 @@
+# Contributing
+Almost all contributions are happily accepted. When submitting a pull request, remember that you have to agree that the contribution's code will automatically be licensed under the MIT license.
