@@ -1,3 +1,6 @@
 # Documentation
 When using Psychix, you will realize that it is very similar to BSD, and Linux. That's because it is designed to be an operating system similar to UNIX/BSD operating systems.
+This documentation will document how Psychix works, and how you can develop programs for Psychix.
+## So, how does Psychix work?
+When Psychix is built, it's kernel is combined with the GRUB bootloader. The GRUB bootloader loads the Psychix kernel, and jumps to it. The kernel may do some architecture-specific work, and then it will start the filesystem. It creates some vital directories like `/dev`, `/tmp`, `/proc`, and then it sets up the device files on `/dev`. These files allow code to open, close, read, and write to them (Read more about them [here](DEVICE.md)!) After that, the kernel will mount the vfs (virtual file system), which contains basic user-mode programs like a shell (Read more about shells [here](SHELLS.md)!), some commands that allow us to navigate through the filesystem, and our work-in-progress window system. Out of all these programs, the kernel runs a program called `init`, which initializes the rest of the basic things, and then runs the shell in a loop (Read more about them [here](DEVICE.md)!).
 **To be continued...**
