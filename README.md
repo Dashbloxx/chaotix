@@ -2,11 +2,13 @@
 <details open>
 <summary>What is Psychix?</summary>
 <br>
+
 Psychix is a UNIX-like operating system that uses some code from Xv6 and yagura. It is designed to
 </details>
 <details open>
 <summary>How can I build Psychix?</summary>
 <br>
+
 To build Psychix, you will need to install some packages.
 * GRUB (grub2 on Ubuntu)
 * GCC (gcc on Ubuntu)
@@ -18,6 +20,7 @@ Support of clang will soon be added aswell, although currently I am planning on 
 <details open>
 <summary>Checklist</summary>
 <br>
+
 Architecture support:
 - [ ] RISC-V architecture support
 - [X] ix86 architecture support
@@ -42,5 +45,6 @@ Operating system features:
 <details open>
 <summary>License</summary>
 <br>
+
 See the license at LICENSE. If there are any ports, the license does not apply to them, rather the original software's license does.
 </details>
