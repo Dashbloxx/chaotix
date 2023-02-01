@@ -14,7 +14,8 @@ To build Psychix, you will need to install some packages.
 * GCC (gcc on Ubuntu)
 * xorriso (xorriso on Ubuntu)
 * qemu (qemu & qemu-system-x86 on Ubuntu)
-* cpio
+* cpio 
+* mtools
 Support of clang will soon be added aswell, although currently I am planning on using cross compilers instead of native GCC...
 </details>
 <details open>
