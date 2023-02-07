@@ -8,4 +8,6 @@ Anyways, let's see the basic shell commands:
 * `cat`, is a command that will print out the contents of a file, using the first argument specified after `cat `. For example `cat hello.txt` will output the contents of `hello.txt`.
 * `touch`, is a command that allows you to create blank files.
 * `mkdir`, is a command that allows you to create directories.
-**To be continued...**
+* `rm` is a command that allows you to remove files.
+* `rmdir` is a command that allows you to remove directories.
+These are the very basic commands that you can find in all/most UNIX-like operating systems (like Psychix!).
