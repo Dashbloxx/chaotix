@@ -6,4 +6,6 @@ Almost all shells come with these basic commands. Before I explain these basic c
 Anyways, let's see the basic shell commands:
 * `ls`, is a command that will list the files in the current directory.
 * `cat`, is a command that will print out the contents of a file, using the first argument specified after `cat `. For example `cat hello.txt` will output the contents of `hello.txt`.
+* `touch`, is a command that allows you to create blank files.
+* `mkdir`, is a command that allows you to create directories.
 **To be continued...**
