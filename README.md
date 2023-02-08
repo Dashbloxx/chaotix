@@ -10,12 +10,12 @@ Psychix is a UNIX-like operating system that uses some code from Xv6 and yagura.
 <br>
 
 To build Psychix, you will need to install some packages.
-* GRUB (grub2 on Ubuntu)
-* GCC (gcc on Ubuntu)
-* xorriso (xorriso on Ubuntu)
-* qemu (qemu & qemu-system-x86 on Ubuntu)
-* cpio 
-* mtools
+* GRUB (`grub2` on Ubuntu)
+* GCC (`gcc` on Ubuntu)
+* xorriso (`xorriso` on Ubuntu)
+* qemu (`qemu` & `qemu-system-x86` on Ubuntu)
+* cpio (`cpio` on Ubuntu)
+* mtools (`mtools` on Ubuntu)
 Support of clang will soon be added aswell, although currently I am planning on using cross compilers instead of native GCC...
 </details>
 <details open>
