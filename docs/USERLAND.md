@@ -1,0 +1,2 @@
+# Userland
+All userspace binaries are programmed in the `userland` subfolder. In the `userland` subfolder, you'll find other directories, which classify different source files. Some of them may be under a directory called `core`, which contains the very essential binaries' source code. The other folder called `window` contains code for the work-in-progress window system for Psychix. Other directories may be ports, which will be optional.
