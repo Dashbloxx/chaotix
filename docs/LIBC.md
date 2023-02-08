@@ -1,0 +1,2 @@
+# Libc
+Programs for Psychix can be written in any language, but are intended to be written in C for full perfection. Psychix comes with it's own implementation of libc, and it is documented here. The code for Psychix's libc can be found under the `lib` subfolder in the userland directory. Libc can be seen as a layer between Psychix's syscalls & your code. See the libc documentation [here](LIBC_DOCUMENTATION.md)!
