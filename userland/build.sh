@@ -54,8 +54,8 @@ then
     cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -DARCH=i386 -MP -c -o core/wc.o core/wc.c
     cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -DARCH=i386 -MP -c -o core/xv6-usertests.o core/xv6-usertests.c
     cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -DARCH=i386 -MP -c -o core/fetch.o core/fetch.c
-    cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -DARCH=i386 -MP -c -o window/main.o window/main.c
-    cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -DARCH=i386 -MP -c -o window/draw.o window/draw.c
+    cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -DARCH=i386 -MP -c -o window/window_server.o window/window_server.c
+    cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -MMD -DARCH=i386 -MP -c -o window/window_manager.o window/window_manager.c
     ar rcs libc.a ../common/math.o ../common/string.o ../common/strings.o ../common/endian.o ../common/stdio.o ../common/stdlib.o lib/crt0.o lib/dirent.o lib/errno.o lib/panic.o lib/stdio.o lib/stdlib.o lib/endian.o lib/string.o lib/syscall.o lib/time.o lib/unistd.o
 
     cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -DARCH=i386 -o ../base/bin/cal core/cal.o -lc
@@ -91,5 +91,5 @@ then
     cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -DARCH=i386 -o ../base/bin/wc core/wc.o -lc
     cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -DARCH=i386 -o ../base/bin/xv6-usertests core/xv6-usertests.o -lc
     cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -DARCH=i386 -o ../base/bin/fetch core/fetch.o -lc
-    cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -DARCH=i386 -o ../base/bin/window window/draw.o window/main.o -lc
+    cc -std=c11 -m32 -static -nostdlib -ffreestanding -U_FORTIFY_SOURCE -Wall -Wextra -pedantic -O2 -g -isystemlib -isystem.. -isystem../common -isystem../kernel/api -L. -DARCH=i386 -o ../base/bin/window window/window_manager.o window/window_server.o -lc
 fi
