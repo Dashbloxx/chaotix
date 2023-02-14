@@ -28,17 +28,21 @@ Architecture support:
 - [ ] ARMvx architecture support
 - [ ] ARM64 architecture support
 - [ ] AMD64 architecture support
+
 Development-related:
 - [X] libc
 - [X] A dedicated developer
 - [X] Psychix can build itself
+
 Contribution-related:
 - [X] Our first contribution!
 - [ ] Our 10th contribution!
+
 Software:
 - [X] Basic command-line tools including `clear`, `rm`, `mkdir`, `cat`, etc.
 - [ ] GCC port
 - [ ] A window system
+
 Operating system features:
 - [ ] Access to the internet (Networking stack)
 - [X] Graphics (framebuffer) 
