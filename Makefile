@@ -25,7 +25,7 @@ base: $@/* userland
 $(SUBDIRS):
 	$(MAKE) -C $@ all
 
-disk_image: kernel initrd
+cdrom.iso: kernel initrd
 	cp kernel/kernel initrd disk/boot
 	grub-mkrescue -o '$@' disk
 
