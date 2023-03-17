@@ -19,4 +19,4 @@ jobs:
             - run: make test
               timeout-minutes: 1
             - run: grub-file --is-x86-multiboot kernel/kernel
-            - run: make disk_image
+            - run: make cdrom.iso
