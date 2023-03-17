@@ -42,3 +42,7 @@ shell: kernel initrd
 
 test: kernel initrd
 	scripts/run_tests.sh
+
+toolchain:
+	scripts/toolchain.sh
+	@export PATH="/opt/i686-elf-cross/bin:$PATH"

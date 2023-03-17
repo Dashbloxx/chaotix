@@ -14,6 +14,7 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - run: sudo apt-get update && sudo apt-get install -y gcc-multilib cpio qemu-system-x86 grub2 mtools xorriso
+            - run: make toolchain
             - run: make
             - run: nm -n kernel/kernel | awk 'NF==3'
             - run: make test
