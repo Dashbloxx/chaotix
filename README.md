@@ -19,7 +19,7 @@ To test psychix, simply run:
 ```
 make run
 ```
-To check all of the features of psychix, simply run:
+To that all of the features of psychix work, simply run:
 ```
 make test
 ```
