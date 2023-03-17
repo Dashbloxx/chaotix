@@ -1,0 +1,1 @@
+This directory contains software that is either software ported to Magma, software compatible with Magma, or software that is planned to be ported to Magma.

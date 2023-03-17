@@ -532,8 +532,7 @@ static bool read_should_unblock(file_description* desc) {
     return should_unblock;
 }
 
-static ssize_t fb_console_device_read(file_description* desc, void* buffer,
-                                      size_t count) {
+static ssize_t fb_console_device_read(file_description* desc, void* buffer, size_t count) {
     (void)desc;
 
     for (;;) {
@@ -553,8 +552,7 @@ static ssize_t fb_console_device_read(file_description* desc, void* buffer,
     }
 }
 
-static ssize_t fb_console_device_write(file_description* desc,
-                                       const void* buffer, size_t count) {
+static ssize_t fb_console_device_write(file_description* desc, const void* buffer, size_t count) {
     (void)desc;
     const char* chars = (char*)buffer;
     mutex_lock(&lock);
@@ -567,8 +565,7 @@ static ssize_t fb_console_device_write(file_description* desc,
     return count;
 }
 
-static int fb_console_device_ioctl(file_description* desc, int request,
-                                   void* argp) {
+static int fb_console_device_ioctl(file_description* desc, int request, void* argp) {
     (void)desc;
     switch (request) {
     case TIOCGPGRP:

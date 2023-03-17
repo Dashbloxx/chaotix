@@ -1,3 +1,4 @@
+#include "../common/escp.h"
 #include "api/sys/stat.h"
 #include "boot_defs.h"
 #include "console/console.h"
@@ -5,7 +6,6 @@
 #include "hid/hid.h"
 #include "interrupts.h"
 #include "kprintf.h"
-//#include "memory.h"
 #include "memory/memory.h"
 #include "multiboot.h"
 #include "panic.h"
@@ -152,7 +152,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     scheduler_init();
     time_init();
     pit_init();
-    kprintf("\x1b[32mInitialization done\x1b[m\n");
+    kprintf(F_GREEN "Initialization done\x1b[m\n");
 
     ASSERT_OK(process_spawn_kernel_process("userland_init", init));
 

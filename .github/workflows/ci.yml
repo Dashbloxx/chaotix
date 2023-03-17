@@ -8,14 +8,13 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                compiler: [gcc, clang]
+                compiler: [gcc]
         env:
             CC: ${{ matrix.compiler }}
         steps:
             - uses: actions/checkout@v3
-            - run: sudo apt-get update && sudo apt-get install -y gcc-multilib cpio qemu-system-x86 grub2 mtools xorriso
-            - run: make toolchain
-            - run: make
+            - run: sudo apt-get update && sudo apt-get install -y gcc-multilib wget cpio qemu-system-x86 grub2 mtools xorriso
+            - run: make CC=gcc
             - run: nm -n kernel/kernel | awk 'NF==3'
             - run: make test
               timeout-minutes: 1

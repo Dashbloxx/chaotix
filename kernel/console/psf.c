@@ -5,7 +5,6 @@
 #include <kernel/api/fcntl.h>
 #include <kernel/fs/fs.h>
 #include <kernel/memory/memory.h>
-//#include <string.h>
 
 static struct font* load_psf1(const char* filename) {
     file_description* desc = vfs_open(filename, O_RDONLY, 0);
