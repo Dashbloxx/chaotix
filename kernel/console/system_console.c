@@ -19,20 +19,17 @@ void system_console_init(void) {
     UNIMPLEMENTED();
 }
 
-static ssize_t system_console_device_read(file_description* desc, void* buffer,
-                                          size_t count) {
+static ssize_t system_console_device_read(file_description* desc, void* buffer, size_t count) {
     (void)desc;
     return file_description_read(active_console, buffer, count);
 }
 
-static ssize_t system_console_device_write(file_description* desc,
-                                           const void* buffer, size_t count) {
+static ssize_t system_console_device_write(file_description* desc, const void* buffer, size_t count) {
     (void)desc;
     return file_description_write(active_console, buffer, count);
 }
 
-static int system_console_device_ioctl(file_description* desc, int request,
-                                       void* argp) {
+static int system_console_device_ioctl(file_description* desc, int request, void* argp) {
     (void)desc;
     return file_description_ioctl(active_console, request, argp);
 }

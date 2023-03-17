@@ -35,10 +35,10 @@ clean:
 	$(RM) initrd disk_image disk/boot/kernel disk/boot/initrd
 
 run: kernel initrd
-	./run.sh
+	scripts/run.sh
 
 shell: kernel initrd
-	./run.sh shell
+	scripts/run.sh shell
 
 test: kernel initrd
-	./run_tests.sh
+	scripts/run_tests.sh

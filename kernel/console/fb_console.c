@@ -18,7 +18,6 @@
 #include <kernel/process.h>
 #include <kernel/ring_buf.h>
 #include <kernel/scheduler.h>
-//#include <string.h>
 
 #define TAB_STOP 8
 
@@ -27,7 +26,7 @@
 
 static const uint32_t palette[] = {
     0x191919, 0xcc0000, 0x4e9a06, 0xc4a000, 0x3465a4, 0x75507b,
-    0x06989a, 0xd0d0d0, 0x555753, 0xef2929, 0x8ae234, 0xfce94f,
+    0x06989a, 0x00a4eb, 0x555753, 0xef2929, 0x8ae234, 0xfce94f,
     0x729fcf, 0xad7fa8, 0x34e2e2, 0xeeeeec,
 };
 
