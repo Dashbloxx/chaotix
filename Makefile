@@ -37,6 +37,9 @@ clean:
 run: kernel initrd
 	scripts/run.sh
 
+runsh: kernel initrd
+	scripts/run.sh shell
+
 shell: kernel initrd
 	scripts/run.sh shell
 

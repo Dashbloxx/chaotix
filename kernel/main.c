@@ -137,9 +137,9 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
         create_char_device("/dev/ttyS0", serial_console_device_create(SERIAL_COM1));
     if (serial_enable_port(SERIAL_COM2))
         create_char_device("/dev/ttyS1", serial_console_device_create(SERIAL_COM2));
-    if (serial_enable_port(SERIAL_COM2))
-        create_char_device("/dev/ttyS2", serial_console_device_create(SERIAL_COM3));
     if (serial_enable_port(SERIAL_COM3))
+        create_char_device("/dev/ttyS2", serial_console_device_create(SERIAL_COM3));
+    if (serial_enable_port(SERIAL_COM4))
         create_char_device("/dev/ttyS3", serial_console_device_create(SERIAL_COM4));
 
     /*
