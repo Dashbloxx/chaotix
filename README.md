@@ -31,4 +31,10 @@ make cdrom.iso
 This will combine the magma kernel, it's initrd, and the GRUB bootloader into a bootable CD-ROM image (a `.iso` file). You can test it on real hardware by flashing that CD-ROM image to a USB drive using [balena etcher](https://www.balena.io/etcher) or [rufus](https://rufus.ie/en/).
 Magma supports multiboot, so you can also combine magma's kernel & initrd with any other bootloader that supports multiboot, but that isn't to be documented right now.
 ## License
-Magma is licensed under the MIT license. See the file `LICENSE` for more information.
+
+<a href="https://opensource.org/licenses/MIT">
+    <img align="right" height="96" alt="MIT License" src="meta/shared/mit-license.png" />
+</a>
+
+The Magma operating system is licensed under the **MIT License**.
+See [LICENSE](LICENSE) to view the license.
