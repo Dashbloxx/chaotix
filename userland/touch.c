@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <escp.h>
 
 int main(int argc, char* const argv[]) {
     if (argc < 2) {
-        dprintf(STDERR_FILENO, "Usage: touch FILE...\n");
+        dprintf(STDERR_FILENO, "%susage: %stouch %s<%sfile-to-create%s>%s\n", F_MAGENTA, F_GREEN, F_BLUE, F_GREEN, F_BLUE, RESET);
         return EXIT_FAILURE;
     }
 

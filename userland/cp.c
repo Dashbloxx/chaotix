@@ -2,12 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <escp.h>
 
 #define BUF_SIZE 1024
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
-        dprintf(STDERR_FILENO, "Usage: cp SOURCE DEST\n");
+        dprintf(STDERR_FILENO, "%susage: %scp %s<%ssource%s> <%sdestination%s>%s\n", F_MAGENTA, F_GREEN, F_BLUE, F_GREEN, F_BLUE, F_GREEN, F_BLUE, RESET);
         return EXIT_FAILURE;
     }
 

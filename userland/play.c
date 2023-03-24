@@ -9,6 +9,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <escp.h>
 
 #define NUM_CHANNELS 2
 
@@ -94,7 +95,7 @@ static void print_progress_bar(int width, int current, int max) {
 
 int main(int argc, char* const argv[]) {
     if (argc != 2) {
-        dprintf(STDERR_FILENO, "Usage: play FILE\n");
+        dprintf(STDERR_FILENO, "%susage: %splay %s<%sfile%s>%s\n", F_MAGENTA, F_GREEN, F_BLUE, F_GREEN, F_BLUE, RESET);
         return EXIT_FAILURE;
     }
 

@@ -25,8 +25,7 @@ struct line_editor {
 
 static void handle_ground(struct line_editor* ed, char c) {
     if (isprint(c)) {
-        memmove(ed->input_buf + ed->cursor + 1, ed->input_buf + ed->cursor,
-                ed->input_len - ed->cursor);
+        memmove(ed->input_buf + ed->cursor + 1, ed->input_buf + ed->cursor, ed->input_len - ed->cursor);
         ed->input_buf[ed->cursor++] = c;
         ++ed->input_len;
         ed->dirty = true;
@@ -44,8 +43,7 @@ static void handle_ground(struct line_editor* ed, char c) {
     case '\x7f': // ^H
         if (ed->cursor == 0)
             return;
-        memmove(ed->input_buf + ed->cursor - 1, ed->input_buf + ed->cursor,
-                ed->input_len - ed->cursor);
+        memmove(ed->input_buf + ed->cursor - 1, ed->input_buf + ed->cursor, ed->input_len - ed->cursor);
         ed->input_buf[--ed->input_len] = 0;
         --ed->cursor;
         ed->dirty = true;
@@ -103,8 +101,7 @@ static void handle_csi_vt(struct line_editor* ed) {
         return;
     case 3: // delete
         if (ed->cursor < ed->input_len) {
-            memmove(ed->input_buf + ed->cursor, ed->input_buf + ed->cursor + 1,
-                    ed->input_len - ed->cursor - 1);
+            memmove(ed->input_buf + ed->cursor, ed->input_buf + ed->cursor + 1, ed->input_len - ed->cursor - 1);
             ed->input_buf[--ed->input_len] = 0;
             ed->dirty = true;
         }
