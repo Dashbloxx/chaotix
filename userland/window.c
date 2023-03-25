@@ -7,12 +7,51 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <escp.h>
+
+#define RGBA(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
+#define RGB(r, g, b) RGBA(r, g, b, 255U)
 
 struct fb_info _fb_info;
 char * fb;
 
+/*
+ *  Convert on-screen coordinates to position in framebuffer.
+ */
 unsigned int genbufferpos(int x, int y) {
     return x * 4 + y * _fb_info.pitch;
+}
+
+/*
+ *  Draw a rectangle.
+ */
+void paint_rect(int pos_x, int pos_y, int size_x, int size_y, int color) {
+    for(int x = pos_x; x <= pos_x + size_x; x++)
+    {
+        for(int y = pos_y; y <= pos_y + size_y; y++)
+        {
+            *(fb + genbufferpos(x, y)) = color & 255;
+            *(fb + genbufferpos(x, y) + 1) = (color >> 8) & 255;
+            *(fb + genbufferpos(x, y) + 2) = (color >> 16) & 255;
+        }
+    }
+}
+
+/*
+ *  Draw a panel on screen.
+ */
+void paint_panel(int pos_x, int pos_y, int size_x, int size_y) {
+    paint_rect(pos_x, pos_y, size_x, size_y, RGB(200, 200, 200));
+    paint_rect(pos_x + 2, pos_y + 2, size_x + 2, size_y + 2, RGB(255, 255, 255));
+}
+
+/*
+ *  Draw a window.
+ */
+void paint_window(int pos_x, int pos_y, int size_x, int size_y) {
+    paint_rect(pos_x, pos_y, size_x, size_y, RGB(200, 200, 200));
+    paint_rect(pos_x + 2, pos_y + 2, size_x + 2, size_y + 2, RGB(255, 255, 255));
+    paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 20, RGB(0, 0, 150));
 }
 
 int main() {
@@ -23,7 +62,7 @@ int main() {
     int fd = open("/dev/fb0", O_RDWR);
     if (fd < 0) {
         if (errno == ENOENT)
-            dprintf(STDERR_FILENO, "Framebuffer is not available\n");
+            dprintf(STDERR_FILENO, "%serror: %sframebuffer is not available%s\n", F_RED, F_YELLOW, RESET);
         else
             perror("open");
         return EXIT_FAILURE;
@@ -42,13 +81,8 @@ int main() {
     /*
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
-    for(int x = 0; x <= 50; x++)
-    {
-        for(int y = 0; y <= 50; y++)
-        {
-            *(fb + genbufferpos(x, y)) = 100;
-        }
-    }
+    paint_window(25, 25, 400, 100);
 
+    getchar();
     return EXIT_SUCCESS;
 }
