@@ -21,6 +21,7 @@ BIN_TARGET_NAMES := \
 	fib \
 	halt \
 	imgview \
+	donut \
 	init \
 	init-test \
 	kill \
