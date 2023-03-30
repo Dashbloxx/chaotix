@@ -97,9 +97,19 @@ int vsnprintf(char* buffer, size_t size, const char* format, va_list args) {
         case 'd':
         case 'i':
         case 'u':
-        case 'x': {
+        case 'x':
+        case '#': {
             char num_buf[20];
-            itoa(va_arg(args, int), num_buf, ch == 'x' ? 16 : 10);
+            if (*format == 'x') {
+                buffer[idx++] = '0';
+                buffer[idx++] = 'x';
+                if (idx >= size)
+                    goto too_long;
+
+                itoa(va_arg(args, int), num_buf, *format++ == 'x' ? 16 : 10);
+            } else {
+                itoa(va_arg(args, int), num_buf, ch == 'x' ? 16 : 10);
+            }
 
             size_t len = strlen(num_buf);
             if (pad_len > len) {
