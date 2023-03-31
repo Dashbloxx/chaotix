@@ -47,6 +47,13 @@ static void create_char_device(const char* pathname, struct inode* device) {
  */
 void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     /*
+     *  We are only using cross-compilers to build the Magma operating system. If we use a x86-compatible cross-compiler, it will by default build us Magma for
+     *  the architecture that the cross-compiler compiles for. For now though, i?86 is supported, meaning that the i686-elf cross-toolchain works for building Magma.
+     *  When i?86 is stated, we mean i386, i486, i586, i686, or i786.
+     *  Anyways, here, we run some i?86-specific stuff...
+     */
+    #if defined(__i386__)
+    /*
      *  Initialize the GDT (Global Descriptor Table). This is a table that can be defined as a struct in C. This struct's pointer can be given to the CPU so that it
      *  knows the characteristics (and the segments themselves) of each segment in memory.
      */
@@ -61,6 +68,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
      *  Initialize the IRQ (Interrupt Request) driver. This will be documented later.
      */
     irq_init();
+    #endif
 
     /*
      *  Initialize the serial driver.
