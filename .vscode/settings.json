@@ -2,5 +2,8 @@
 	"files.exclude": {
 		"**/*.o": true,
 		"**/*.d": true
+	},
+	"files.associations": {
+		"system.h": "c"
 	}
 }

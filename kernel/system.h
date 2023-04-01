@@ -8,6 +8,12 @@
 
 #define CLK_TCK 250
 
+/*
+ *  Since these registers represent i?86 registers, let's add a macro that checks if we're compiling for i?86. If we are, then let's make a type that represents a
+ *  struct which represents the i?86 registers. If we ever support a different architecture, we will create a seperate macro that checks for that architecture, and
+ *  defines a seperate struct also named `registers`, that should represent the other architecture's registers.
+ */
+#if defined(__i386__)
 typedef struct registers {
     uint32_t ss, gs, fs, es, ds;
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
@@ -23,11 +29,15 @@ struct fpu_state {
 
 void gdt_init(void);
 void gdt_set_kernel_stack(uintptr_t stack_top);
+#endif
 
 void syscall_init(void);
 
 extern uint32_t uptime;
+
+#if defined(__i386__)
 void pit_init(void);
+#endif
 
 void cmdline_init(const multiboot_info_t*);
 const char* cmdline_get_raw(void);
@@ -46,5 +56,11 @@ struct inode* null_device_create(void);
 struct inode* zero_device_create(void);
 struct inode* full_device_create(void);
 
+/*
+ *  Later on, we may just make macro definitions that allow us to tell the compiler if we want to compile with a specific driver, like the sound driver below. For now
+ *  though, we will just check here if we're using the i?86 architecture...
+ */
+#if defined(__i386__)
 bool ac97_init(void);
 struct inode* ac97_device_create(void);
+#endif

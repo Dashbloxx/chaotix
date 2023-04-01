@@ -1,6 +1,8 @@
 #include "system.h"
 #include <stddef.h>
 
+#if defined(__i386__)
+
 typedef struct gdt_descriptor {
     uint16_t limit_lo : 16;
     uint16_t base_lo : 16;
@@ -78,3 +80,5 @@ void gdt_init(void) {
 }
 
 void gdt_set_kernel_stack(uintptr_t stack_top) { tss.esp0 = stack_top; }
+
+#endif
