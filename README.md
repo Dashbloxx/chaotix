@@ -32,7 +32,7 @@ This will combine the magma kernel, it's initrd, and the GRUB bootloader into a 
 Magma supports multiboot, so you can also combine magma's kernel & initrd with any other bootloader that supports multiboot, but that isn't to be documented right now.
 ## License
 
-<a href="https://opensource.org/licenses/MIT"><img align="right" height="96" alt="MIT License" src="meta/shared/mit-license.png" /></a>
+<a href="https://opensource.org/licenses/MIT"><img align="right" height="96" alt="MIT License" src=".assets/mit-license.png" /></a>
 
 The Magma operating system is licensed under the **MIT License**.
 

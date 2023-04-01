@@ -11,8 +11,7 @@
 
 #define PCI_CLASS_MULTIMEDIA 4
 #define PCI_SUBCLASS_AUDIO_CONTROLLER 1
-#define PCI_TYPE_MULTIMEDIA_AUDIO_CONTROLLER                                   \
-    (PCI_CLASS_MULTIMEDIA << 8 | PCI_SUBCLASS_AUDIO_CONTROLLER)
+#define PCI_TYPE_MULTIMEDIA_AUDIO_CONTROLLER (PCI_CLASS_MULTIMEDIA << 8 | PCI_SUBCLASS_AUDIO_CONTROLLER)
 
 #define BUS_PCM_OUT 0x10
 #define BUS_GLOBAL_CONTROL 0x2c
@@ -49,8 +48,10 @@ static uint16_t mixer_base;
 static uint16_t bus_base;
 static uint16_t pcm_out_channel;
 
-static void pci_enumeration_callback(const struct pci_addr* addr,
-                                     uint16_t vendor_id, uint16_t device_id) {
+/* AC97 isn't really common in other architectures, so we'll make this i?86-only for now. */
+
+#if defined(__i386__)
+static void pci_enumeration_callback(const struct pci_addr* addr, uint16_t vendor_id, uint16_t device_id) {
     (void)vendor_id;
     (void)device_id;
     if (pci_get_type(addr) == PCI_TYPE_MULTIMEDIA_AUDIO_CONTROLLER) {
@@ -146,8 +147,7 @@ static void start_dma(void) {
     dma_is_running = true;
 }
 
-static int write_single_buffer(file_description* desc, const void* buffer,
-                               size_t count) {
+static int write_single_buffer(file_description* desc, const void* buffer, size_t count) {
     bool int_flag = push_cli();
     do {
         uint8_t current_idx = in8(pcm_out_channel + CHANNEL_CURRENT_INDEX);
@@ -194,14 +194,12 @@ static int write_single_buffer(file_description* desc, const void* buffer,
         start_dma();
 
     output_buf_page_idx = (output_buf_page_idx + 1) % OUTPUT_BUF_NUM_PAGES;
-    buffer_descriptor_list_idx = (buffer_descriptor_list_idx + 1) %
-                                 BUFFER_DESCRIPTOR_LIST_MAX_NUM_ENTRIES;
+    buffer_descriptor_list_idx = (buffer_descriptor_list_idx + 1) % BUFFER_DESCRIPTOR_LIST_MAX_NUM_ENTRIES;
 
     return 0;
 }
 
-static ssize_t ac97_device_write(file_description* desc, const void* buffer,
-                                 size_t count) {
+static ssize_t ac97_device_write(file_description* desc, const void* buffer, size_t count) {
     unsigned char* src = (unsigned char*)buffer;
     size_t nwritten = 0;
     while (count > 0) {
@@ -256,3 +254,4 @@ struct inode* ac97_device_create(void) {
                             .ref_count = 1};
     return inode;
 }
+#endif

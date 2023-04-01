@@ -5,14 +5,21 @@
 #include <common/calendar.h>
 
 static uint8_t cmos_read(uint8_t idx) {
+    /*
+     *  Only i?86 uses instructions like `outb`, `outl`, `outw`, `inb`, `inl`, and `inw` (I believe). Therefore, we use a macro to isolate the code here to
+     *  i?86 processors only.
+     */
+    #if defined(__i386__)
     out8(0x70, idx);
     return in8(0x71);
+    #endif
 }
 
 static uint8_t bcd_to_bin(uint8_t bcd) {
     return (bcd & 0xf) + ((bcd >> 4) * 10);
 }
 
+/* Return the amount of days since epoch. The epoch in this context, is since midnight of Janurary 1st, 1970. */
 static unsigned days_since_epoch(unsigned year, unsigned month, unsigned day) {
     ASSERT(year >= 1970);
     unsigned days = day_of_year(year, month, day);
@@ -20,6 +27,7 @@ static unsigned days_since_epoch(unsigned year, unsigned month, unsigned day) {
         days += days_in_year(y);
     return days;
 }
+
 
 static time_t rtc_now(void) {
     int timeout = 100;

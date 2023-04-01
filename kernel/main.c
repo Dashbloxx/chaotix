@@ -131,10 +131,15 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     create_char_device("/dev/psaux", ps2_mouse_device_create());
 
     /*
+     *  AC97 isn't really common on other architectures, therefore we just make this a i?86-only thing.
+     */
+    #if defined(__i386__)
+    /*
      *  Initialize the AC97 driver. If the device exists, then create a character device named `dsp`.
      */
     if (ac97_init())
         create_char_device("/dev/dsp", ac97_device_create());
+    #endif
 
     /*
      *  Initialize the serial console, and serial ports COM1-COM3 as character devices. These character devices are known as `ttyS?`. The serial driver however, is
