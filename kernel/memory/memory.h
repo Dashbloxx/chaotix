@@ -19,11 +19,9 @@ typedef struct range_allocator {
     mutex lock;
 } range_allocator;
 
-NODISCARD int range_allocator_init(range_allocator* allocator, uintptr_t start,
-                                   uintptr_t end);
+NODISCARD int range_allocator_init(range_allocator* allocator, uintptr_t start, uintptr_t end);
 uintptr_t range_allocator_alloc(range_allocator* allocator, size_t size);
-NODISCARD int range_allocator_free(range_allocator* allocator, uintptr_t addr,
-                                   size_t size);
+NODISCARD int range_allocator_free(range_allocator* allocator, uintptr_t addr, size_t size);
 
 extern range_allocator kernel_vaddr_allocator;
 
@@ -46,14 +44,9 @@ page_directory* paging_clone_current_page_directory(void);
 void paging_destroy_current_page_directory(void);
 void paging_switch_page_directory(page_directory* pd);
 
-NODISCARD int paging_map_to_free_pages(uintptr_t virtual_addr, uintptr_t size,
-                                       uint16_t flags);
-NODISCARD int paging_map_to_physical_range(uintptr_t virtual_addr,
-                                           uintptr_t physical_addr,
-                                           uintptr_t size, uint16_t flags);
-NODISCARD int paging_copy_mapping(uintptr_t to_virtual_addr,
-                                  uintptr_t from_virtual_addr, uintptr_t size,
-                                  uint16_t flags);
+NODISCARD int paging_map_to_free_pages(uintptr_t virtual_addr, uintptr_t size, uint16_t flags);
+NODISCARD int paging_map_to_physical_range(uintptr_t virtual_addr, uintptr_t physical_addr, uintptr_t size, uint16_t flags);
+NODISCARD int paging_copy_mapping(uintptr_t to_virtual_addr, uintptr_t from_virtual_addr, uintptr_t size, uint16_t flags);
 void paging_unmap(uintptr_t virtual_addr, uintptr_t size);
 
 void* kmalloc(size_t size);

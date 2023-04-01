@@ -289,12 +289,8 @@ static void irq_handler(registers* reg) {
     if (state & STATE_ALTGR)
         modifiers |= KEY_MODIFIER_ALTGR;
 
-    const char* to_key = (modifiers & KEY_MODIFIER_SHIFT)
-                             ? scancode_to_shifted_key
-                             : scancode_to_key;
-    const uint8_t* to_keycode = (modifiers & KEY_MODIFIER_SHIFT)
-                                    ? scancode_to_shifted_keycode
-                                    : scancode_to_keycode;
+    const char* to_key = (modifiers & KEY_MODIFIER_SHIFT) ? scancode_to_shifted_key : scancode_to_key;
+    const uint8_t* to_keycode = (modifiers & KEY_MODIFIER_SHIFT) ? scancode_to_shifted_keycode : scancode_to_keycode;
 
     key_event* event = queue + queue_write_idx;
     queue_write_idx = (queue_write_idx + 1) % QUEUE_SIZE;
@@ -314,19 +310,25 @@ static void irq_handler(registers* reg) {
 
 void ps2_keyboard_init(void) {
     ps2_write(PS2_COMMAND, PS2_ENABLE_PORT1);
+    #if defined(__i386__)
     idt_register_interrupt_handler(IRQ(1), irq_handler);
+    #endif
 }
 
 static bool read_should_unblock(file_description* desc) {
+    #if defined(__i386__)
     (void)desc;
     bool int_flag = push_cli();
     bool should_unblock = queue_read_idx != queue_write_idx;
     pop_cli(int_flag);
     return should_unblock;
+    #else
+    return false;
+    #endif
 }
 
-static ssize_t ps2_keyboard_device_read(file_description* desc, void* buffer,
-                                        size_t count) {
+static ssize_t ps2_keyboard_device_read(file_description* desc, void* buffer, size_t count) {
+    #if defined(__i386__)
     (void)desc;
 
     for (;;) {
@@ -353,6 +355,9 @@ static ssize_t ps2_keyboard_device_read(file_description* desc, void* buffer,
         pop_cli(int_flag);
         return nread;
     }
+    #else
+    return 0;
+    #endif
 }
 
 struct inode* ps2_keyboard_device_create(void) {
@@ -361,9 +366,6 @@ struct inode* ps2_keyboard_device_create(void) {
         return ERR_PTR(-ENOMEM);
 
     static file_ops fops = {.read = ps2_keyboard_device_read};
-    *inode = (struct inode){.fops = &fops,
-                            .mode = S_IFCHR,
-                            .device_id = makedev(11, 0),
-                            .ref_count = 1};
+    *inode = (struct inode){.fops = &fops, .mode = S_IFCHR, .device_id = makedev(11, 0), .ref_count = 1};
     return inode;
 }

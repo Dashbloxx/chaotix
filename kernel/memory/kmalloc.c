@@ -24,8 +24,7 @@ void* kaligned_alloc(size_t alignment, size_t size) {
     uintptr_t addr = range_allocator_alloc(&kernel_vaddr_allocator, real_size);
     if (IS_ERR(addr))
         return NULL;
-    if (IS_ERR(paging_map_to_free_pages(addr, real_size,
-                                        PAGE_WRITE | PAGE_GLOBAL)))
+    if (IS_ERR(paging_map_to_free_pages(addr, real_size, PAGE_WRITE | PAGE_GLOBAL)))
         return NULL;
 
     struct header* header = (struct header*)addr;
@@ -37,6 +36,7 @@ void* kaligned_alloc(size_t alignment, size_t size) {
     return ptr;
 }
 
+/* Returns a pointer to allocated memory with the size being the amount provided as the argument... */
 void* kmalloc(size_t size) {
     return kaligned_alloc(alignof(max_align_t), size);
 }
@@ -72,14 +72,14 @@ void* krealloc(void* ptr, size_t new_size) {
     return new_ptr;
 }
 
+/* Free the memory by giving a pointer to the address given to you by the function that allocated the memory... */
 void kfree(void* ptr) {
     if (!ptr)
         return;
     struct header* header = header_from_ptr(ptr);
     size_t size = header->size;
     paging_unmap((uintptr_t)header, size);
-    ASSERT_OK(
-        range_allocator_free(&kernel_vaddr_allocator, (uintptr_t)header, size));
+    ASSERT_OK(range_allocator_free(&kernel_vaddr_allocator, (uintptr_t)header, size));
 }
 
 char* kstrdup(const char* src) {

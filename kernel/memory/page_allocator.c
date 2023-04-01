@@ -42,9 +42,8 @@ static ssize_t bitmap_find_first_set(void) {
 
 extern unsigned char kernel_end[];
 
-static void get_available_physical_addr_bounds(const multiboot_info_t* mb_info,
-                                               uintptr_t* lower_bound,
-                                               uintptr_t* upper_bound) {
+/* Get physical memory bounds using the multiboot headers... */
+static void get_available_physical_addr_bounds(const multiboot_info_t* mb_info, uintptr_t* lower_bound, uintptr_t* upper_bound) {
     *lower_bound = (uintptr_t)kernel_end - KERNEL_VADDR;
 
     if (!(mb_info->flags & MULTIBOOT_INFO_MEM_MAP)) {
@@ -52,10 +51,8 @@ static void get_available_physical_addr_bounds(const multiboot_info_t* mb_info,
         return;
     }
 
-    uint32_t num_entries =
-        mb_info->mmap_length / sizeof(multiboot_memory_map_t);
-    const multiboot_memory_map_t* entry =
-        (const multiboot_memory_map_t*)(mb_info->mmap_addr + KERNEL_VADDR);
+    uint32_t num_entries = mb_info->mmap_length / sizeof(multiboot_memory_map_t);
+    const multiboot_memory_map_t* entry = (const multiboot_memory_map_t*)(mb_info->mmap_addr + KERNEL_VADDR);
 
     *upper_bound = *lower_bound;
     for (uint32_t i = 0; i < num_entries; ++i, ++entry) {
@@ -70,16 +67,13 @@ static void get_available_physical_addr_bounds(const multiboot_info_t* mb_info,
 
 static struct physical_memory_info memory_info;
 
-static void bitmap_init(const multiboot_info_t* mb_info, uintptr_t lower_bound,
-                        uintptr_t upper_bound) {
+static void bitmap_init(const multiboot_info_t* mb_info, uintptr_t lower_bound, uintptr_t upper_bound) {
     bitmap_len = div_ceil(upper_bound, PAGE_SIZE * 32);
     ASSERT(bitmap_len <= BITMAP_MAX_LEN);
 
     if (mb_info->flags & MULTIBOOT_INFO_MEM_MAP) {
-        uint32_t num_entries =
-            mb_info->mmap_length / sizeof(multiboot_memory_map_t);
-        const multiboot_memory_map_t* entry =
-            (const multiboot_memory_map_t*)(mb_info->mmap_addr + KERNEL_VADDR);
+        uint32_t num_entries = mb_info->mmap_length / sizeof(multiboot_memory_map_t);
+        const multiboot_memory_map_t* entry = (const multiboot_memory_map_t*)(mb_info->mmap_addr + KERNEL_VADDR);
 
         for (uint32_t i = 0; i < num_entries; ++i, ++entry) {
             if (entry->type != MULTIBOOT_MEMORY_AVAILABLE)
@@ -88,9 +82,7 @@ static void bitmap_init(const multiboot_info_t* mb_info, uintptr_t lower_bound,
             uintptr_t entry_start = entry->addr;
             uintptr_t entry_end = entry->addr + entry->len;
 
-            kprintf("Available region: P0x%08x - P0x%08x (%u MiB)\n",
-                    entry_start, entry_end,
-                    (entry_end - entry_start) / 0x100000);
+            kprintf("Available region: P0x%08x - P0x%08x (%u MiB)\n", entry_start, entry_end, (entry_end - entry_start) / 0x100000);
 
             if (entry_start < lower_bound)
                 entry_start = lower_bound;
@@ -98,24 +90,19 @@ static void bitmap_init(const multiboot_info_t* mb_info, uintptr_t lower_bound,
             if (entry_start >= entry_end)
                 continue;
 
-            for (size_t i = div_ceil(entry_start, PAGE_SIZE);
-                 i < entry_end / PAGE_SIZE; ++i)
+            for (size_t i = div_ceil(entry_start, PAGE_SIZE); i < entry_end / PAGE_SIZE; ++i)
                 bitmap_set(i);
         }
     } else {
-        for (size_t i = div_ceil(lower_bound, PAGE_SIZE);
-             i < upper_bound / PAGE_SIZE; ++i)
+        for (size_t i = div_ceil(lower_bound, PAGE_SIZE); i < upper_bound / PAGE_SIZE; ++i)
             bitmap_set(i);
     }
 
     if (mb_info->flags & MULTIBOOT_INFO_MODS) {
-        const multiboot_module_t* mod =
-            (const multiboot_module_t*)(mb_info->mods_addr + KERNEL_VADDR);
+        const multiboot_module_t* mod = (const multiboot_module_t*)(mb_info->mods_addr + KERNEL_VADDR);
         for (uint32_t i = 0; i < mb_info->mods_count; ++i) {
-            kprintf("Module: P0x%08x - P0x%08x (%u MiB)\n", mod->mod_start,
-                    mod->mod_end, (mod->mod_end - mod->mod_start) / 0x100000);
-            for (size_t i = mod->mod_start / PAGE_SIZE;
-                 i < div_ceil(mod->mod_end, PAGE_SIZE); ++i)
+            kprintf("Module: P0x%08x - P0x%08x (%u MiB)\n", mod->mod_start, mod->mod_end, (mod->mod_end - mod->mod_start) / 0x100000);
+            for (size_t i = mod->mod_start / PAGE_SIZE; i < div_ceil(mod->mod_end, PAGE_SIZE); ++i)
                 bitmap_clear(i);
             ++mod;
         }
@@ -136,6 +123,10 @@ static void bitmap_init(const multiboot_info_t* mb_info, uintptr_t lower_bound,
     kprintf("#Physical pages: %u (%u KiB)\n", num_pages, memory_info.total);
 }
 
+/*
+ *  Initialize the page allocator using the multiboot header. The multiboot header contains values given by the bootloader. Only the bootloader can give us these
+ *  values (because you can only get these values while in real mode, and the bootloader is in real mode at the start).
+ */
 void page_allocator_init(const multiboot_info_t* mb_info) {
     // In the current setup, kernel image (including 1MiB offset) has to fit in
     // single page table (< 4MiB), and last two pages are reserved for quickmap
@@ -144,8 +135,7 @@ void page_allocator_init(const multiboot_info_t* mb_info) {
     uintptr_t lower_bound;
     uintptr_t upper_bound;
     get_available_physical_addr_bounds(mb_info, &lower_bound, &upper_bound);
-    kprintf("Available physical memory address space: P0x%x - P0x%x\n",
-            lower_bound, upper_bound);
+    kprintf("Available physical memory address space: P0x%x - P0x%x\n", lower_bound, upper_bound);
 
     bitmap_init(mb_info, lower_bound, upper_bound);
 }

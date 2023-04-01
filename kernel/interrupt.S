@@ -1,3 +1,5 @@
+#if defined(__i386__)
+
   .globl isr_common_stub
 isr_common_stub:
   pusha
@@ -55,3 +57,5 @@ return_to_userland:
 
   addl $8, %esp # pop err_code and num
   iret
+
+#endif

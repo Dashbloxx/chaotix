@@ -8,7 +8,11 @@
 #include <kernel/panic.h>
 #include <kernel/process.h>
 #include <stdalign.h>
-//#include <string.h>
+
+/*
+ *  Although paging is a mechanism that also works in the PowerPC & SPARC architecture, we'll just make this an i?86 thing for now.
+ */
+#if defined(__i386__)
 
 typedef union page_directory_entry {
     struct {
@@ -121,8 +125,7 @@ static int map_page_to_free_page(uintptr_t vaddr, uint32_t flags) {
     return 0;
 }
 
-static int map_page_to_physical_addr(uintptr_t vaddr, uintptr_t paddr,
-                                     uint32_t flags) {
+static int map_page_to_physical_addr(uintptr_t vaddr, uintptr_t paddr, uint32_t flags) {
     volatile page_table_entry* pte = get_or_create_pte(vaddr);
     if (IS_ERR(pte))
         return PTR_ERR(pte);
@@ -396,3 +399,5 @@ void paging_unmap(uintptr_t vaddr, uintptr_t size) {
     for (uintptr_t offset = 0; offset < size; offset += PAGE_SIZE)
         unmap_page(vaddr + offset);
 }
+
+#endif

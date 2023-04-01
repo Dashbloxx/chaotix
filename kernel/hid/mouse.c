@@ -22,6 +22,8 @@ static mouse_event queue[QUEUE_SIZE];
 static size_t queue_read_idx = 0;
 static size_t queue_write_idx = 0;
 
+/* IRQs are i?86-specific */
+#if defined(__i386__)
 static void irq_handler(registers* reg) {
     (void)reg;
 
@@ -54,6 +56,7 @@ static void irq_handler(registers* reg) {
     }
     UNREACHABLE();
 }
+#endif
 
 void ps2_mouse_init(void) {
     ps2_write(PS2_COMMAND, PS2_ENABLE_PORT2);

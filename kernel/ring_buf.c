@@ -49,8 +49,7 @@ ssize_t ring_buf_write(ring_buf* buf, const void* bytes, size_t count) {
     return nwritten;
 }
 
-ssize_t ring_buf_write_evicting_oldest(ring_buf* buf, const void* bytes,
-                                       size_t count) {
+ssize_t ring_buf_write_evicting_oldest(ring_buf* buf, const void* bytes, size_t count) {
     size_t nwritten = 0;
     unsigned char* dest = buf->inner_buf;
     const unsigned char* src = bytes;

@@ -1,3 +1,5 @@
+#if defined(__i386__)
+
 #include "boot_defs.h"
 #define ASM_FILE
 #include "multiboot.h"
@@ -106,3 +108,5 @@ read_eip:
   .skip STACK_SIZE
   .globl stack_top
 stack_top:
+
+#endif

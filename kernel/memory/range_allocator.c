@@ -9,8 +9,7 @@ struct range {
     struct range* next;
 };
 
-int range_allocator_init(range_allocator* allocator, uintptr_t start,
-                         uintptr_t end) {
+int range_allocator_init(range_allocator* allocator, uintptr_t start, uintptr_t end) {
     ASSERT(start % PAGE_SIZE == 0);
     ASSERT(end % PAGE_SIZE == 0);
 
@@ -79,8 +78,7 @@ uintptr_t range_allocator_alloc(range_allocator* allocator, size_t size) {
     return (uintptr_t)it;
 }
 
-int range_allocator_free(range_allocator* allocator, uintptr_t addr,
-                         size_t size) {
+int range_allocator_free(range_allocator* allocator, uintptr_t addr, size_t size) {
     ASSERT(addr % PAGE_SIZE == 0);
     ASSERT(allocator->ranges);
     size = round_up(size, PAGE_SIZE);
@@ -92,8 +90,7 @@ int range_allocator_free(range_allocator* allocator, uintptr_t addr,
     struct range* prev = NULL;
     struct range* it = allocator->ranges;
     while (it && (uintptr_t)it + it->size <= addr) {
-        ASSERT(((uintptr_t)it + it->size <= addr) ||
-               (addr + size <= (uintptr_t)it));
+        ASSERT(((uintptr_t)it + it->size <= addr) || (addr + size <= (uintptr_t)it));
         prev = it;
         it = it->next;
     }
@@ -109,8 +106,7 @@ int range_allocator_free(range_allocator* allocator, uintptr_t addr,
         return 0;
     }
     if (it && (uintptr_t)it == addr + size) {
-        int rc = paging_copy_mapping(addr, (uintptr_t)it, sizeof(struct range),
-                                     PAGE_WRITE);
+        int rc = paging_copy_mapping(addr, (uintptr_t)it, sizeof(struct range), PAGE_WRITE);
         if (IS_ERR(rc)) {
             mutex_unlock(&allocator->lock);
             return rc;
