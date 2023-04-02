@@ -4,6 +4,8 @@
 		"**/*.d": true
 	},
 	"files.associations": {
-		"system.h": "c"
+		"system.h": "c",
+		"pci.h": "c",
+		"asm_wrapper.h": "c"
 	}
 }

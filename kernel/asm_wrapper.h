@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <stdnoreturn.h>
 
+/* All functions here except `delay` are i?86-exclusive, therefore they are made only available when compiling for i?86... */
+
+#if defined(__i386__)
 uint32_t read_eip(void);
 
 static inline uint32_t read_eflags(void) {
@@ -88,19 +91,30 @@ static inline void out16(uint16_t port, uint16_t data) {
 static inline void out32(uint16_t port, uint32_t data) {
     __asm__ volatile("outl %1, %0" : : "dN"(port), "a"(data));
 }
+#endif
 
 static inline void delay(uint32_t usec) {
+    #if defined(__i386__)
     uint8_t dummy;
     while (usec--) {
         __asm__ volatile("inb $0x80, %0" : "=a"(dummy));
     }
+    #endif
 }
 
-static inline void hlt(void) { __asm__ volatile("hlt"); }
+static inline void hlt(void) {
+    #if defined(__i386__)
+    __asm__ volatile("hlt");
+    #endif
+}
 
+#if defined(__i386__)
 static inline noreturn void ud2(void) {
     __asm__ volatile("ud2");
     __builtin_unreachable();
 }
+#endif
 
+#if defined(__i386__)
 static inline void pause(void) { __asm__ volatile("pause"); }
+#endif

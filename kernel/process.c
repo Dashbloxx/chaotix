@@ -144,8 +144,7 @@ void process_die_if_needed(void) {
 
 noreturn void process_exit(int status) {
     if (status != 0)
-        kprintf("\x1b[31mProcess %d exited with status %d\x1b[m\n",
-                current->pid, status);
+        kprintf("\x1b[31mProcess %d exited with status %d\x1b[m\n", current->pid, status);
     current->exit_status = (status & 0xff) << 8;
     die();
 }

@@ -24,8 +24,7 @@ static void timespec_add(struct timespec* this, const struct timespec* other) {
     }
 }
 
-static void timespec_saturating_sub(struct timespec* this,
-                                    const struct timespec* other) {
+static void timespec_saturating_sub(struct timespec* this, const struct timespec* other) {
     this->tv_sec -= other->tv_sec;
     this->tv_nsec -= other->tv_nsec;
     if (this->tv_nsec < 0) {
@@ -39,13 +38,10 @@ static void timespec_saturating_sub(struct timespec* this,
 static bool sleep_should_unblock(const struct timespec* deadline) {
     struct timespec now = {0};
     time_now(&now);
-    return now.tv_sec > deadline->tv_sec ||
-           (now.tv_sec == deadline->tv_sec && now.tv_nsec >= deadline->tv_nsec);
+    return now.tv_sec > deadline->tv_sec || (now.tv_sec == deadline->tv_sec && now.tv_nsec >= deadline->tv_nsec);
 }
 
-int sys_clock_nanosleep(clockid_t clockid, int flags,
-                        const struct timespec* request,
-                        struct timespec* remain) {
+int sys_clock_nanosleep(clockid_t clockid, int flags, const struct timespec* request, struct timespec* remain) {
     switch (clockid) {
     case CLOCK_REALTIME:
     case CLOCK_MONOTONIC:

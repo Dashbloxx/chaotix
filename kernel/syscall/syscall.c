@@ -41,8 +41,7 @@ long sys_sysconf(int name) {
 
 int sys_dbgputs(const char* str) { return kputs(str); }
 
-typedef uintptr_t (*syscall_handler_fn)(uintptr_t arg1, uintptr_t arg2,
-                                        uintptr_t arg3, uintptr_t arg4);
+typedef uintptr_t (*syscall_handler_fn)(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
 
 static syscall_handler_fn syscall_handlers[NUM_SYSCALLS + 1] = {
 #define ENUM_ITEM(name) (syscall_handler_fn)(uintptr_t) sys_##name,
@@ -78,7 +77,10 @@ static void syscall_handler(registers* regs) {
 }
 
 void syscall_init(void) {
+    /* IDTs are i?86-specific things... */
+    #if defined(__i386__)
     idt_register_interrupt_handler(SYSCALL_VECTOR, syscall_handler);
     idt_set_gate_user_callable(SYSCALL_VECTOR);
     idt_flush();
+    #endif
 }

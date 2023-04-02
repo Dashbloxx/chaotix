@@ -122,6 +122,8 @@ NODISCARD static int push_ptrs(uintptr_t* sp, uintptr_t stack_base,
 }
 
 int sys_execve(const char* pathname, char* const argv[], char* const envp[]) {
+    /* Contains i?86-specific code, so we'll add guards that check if we're compiling for i?86... */
+    #if defined(__i386__)
     if (!pathname || !argv || !envp)
         return -EFAULT;
 
@@ -215,19 +217,14 @@ int sys_execve(const char* pathname, char* const argv[], char* const envp[]) {
         }
 
         uintptr_t region_start = round_down(phdr->p_vaddr, PAGE_SIZE);
-        uintptr_t region_end =
-            round_up(phdr->p_vaddr + phdr->p_memsz, PAGE_SIZE);
-        ret = paging_map_to_free_pages(region_start, region_end - region_start,
-                                       PAGE_USER | PAGE_WRITE);
+        uintptr_t region_end = round_up(phdr->p_vaddr + phdr->p_memsz, PAGE_SIZE);
+        ret = paging_map_to_free_pages(region_start, region_end - region_start, PAGE_USER | PAGE_WRITE);
         if (IS_ERR(ret))
             goto fail;
 
         memset((void*)region_start, 0, phdr->p_vaddr - region_start);
-        memcpy((void*)phdr->p_vaddr,
-               (void*)((uintptr_t)executable_buf + phdr->p_offset),
-               phdr->p_filesz);
-        memset((void*)(phdr->p_vaddr + phdr->p_filesz), 0,
-               region_end - phdr->p_vaddr - phdr->p_filesz);
+        memcpy((void*)phdr->p_vaddr, (void*)((uintptr_t)executable_buf + phdr->p_offset), phdr->p_filesz);
+        memset((void*)(phdr->p_vaddr + phdr->p_filesz), 0, region_end - phdr->p_vaddr - phdr->p_filesz);
 
         if (max_segment_addr < region_end)
             max_segment_addr = region_end;
@@ -238,22 +235,19 @@ int sys_execve(const char* pathname, char* const argv[], char* const envp[]) {
     executable_buf = NULL;
 
     range_allocator vaddr_allocator;
-    ret =
-        range_allocator_init(&vaddr_allocator, max_segment_addr, KERNEL_VADDR);
+    ret = range_allocator_init(&vaddr_allocator, max_segment_addr, KERNEL_VADDR);
     if (IS_ERR(ret))
         goto fail;
 
     // we keep extra pages before and after stack unmapped to detect stack
     // overflow and underflow by causing page faults
-    uintptr_t stack_region =
-        range_allocator_alloc(&vaddr_allocator, 2 * PAGE_SIZE + STACK_SIZE);
+    uintptr_t stack_region = range_allocator_alloc(&vaddr_allocator, 2 * PAGE_SIZE + STACK_SIZE);
     if (IS_ERR(stack_region)) {
         ret = stack_region;
         goto fail;
     }
     uintptr_t stack_base = stack_region + PAGE_SIZE;
-    ret = paging_map_to_free_pages(stack_base, STACK_SIZE,
-                                   PAGE_WRITE | PAGE_USER);
+    ret = paging_map_to_free_pages(stack_base, STACK_SIZE, PAGE_WRITE | PAGE_USER);
     if (IS_ERR(ret))
         goto fail;
 
@@ -352,4 +346,5 @@ fail:
     paging_switch_page_directory(prev_pd);
 
     return ret;
+    #endif
 }

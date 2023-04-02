@@ -20,46 +20,58 @@
 #define PCI_COMMAND_BUS_MASTER 0x4
 #define PCI_COMMAND_INTERRUPT_DISABLE 0x400
 
-static uint32_t io_address_for_field(const struct pci_addr* addr,
-                                     uint8_t field) {
-    return 0x80000000 | ((uint32_t)addr->bus << 16) |
-           ((uint32_t)addr->slot << 11) | ((uint32_t)addr->function << 8) |
-           (field & 0xfc);
+static uint32_t io_address_for_field(const struct pci_addr* addr, uint8_t field) {
+    return 0x80000000 | ((uint32_t)addr->bus << 16) | ((uint32_t)addr->slot << 11) | ((uint32_t)addr->function << 8) | (field & 0xfc);
 }
 
+/* The functions `read_field8`, `read_field16`, `read_field32`, and their equavilents for writing*/
+
 static uint16_t read_field8(const struct pci_addr* addr, uint8_t field) {
+    #if defined(__i386__)
     out32(PCI_ADDRESS_PORT, io_address_for_field(addr, field));
     return in8(PCI_VALUE_PORT + (field & 3));
+    #else
+    return 0;
+    #endif
 }
 
 static uint16_t read_field16(const struct pci_addr* addr, uint8_t field) {
+    #if defined(__i386__)
     out32(PCI_ADDRESS_PORT, io_address_for_field(addr, field));
     return in16(PCI_VALUE_PORT + (field & 2));
+    #else
+    return 0;
+    #endif
 }
 
 static uint32_t read_field32(const struct pci_addr* addr, uint8_t field) {
+    #if defined(__i386__)
     out32(PCI_ADDRESS_PORT, io_address_for_field(addr, field));
     return in32(PCI_VALUE_PORT);
+    #else
+    return 0;
+    #endif
 }
 
-static void write_field16(const struct pci_addr* addr, uint8_t field,
-                          uint16_t value) {
+static void write_field16(const struct pci_addr* addr, uint8_t field, uint16_t value) {
+    #if defined(__i386__)
     out32(PCI_ADDRESS_PORT, io_address_for_field(addr, field));
     out16(PCI_VALUE_PORT + (field & 2), value);
+    #else
+    return 0;
+    #endif
 }
 
 static void enumerate_bus(uint8_t bus, pci_enumeration_callback_fn callback);
 
-static void enumerate_functions(const struct pci_addr* addr,
-                                pci_enumeration_callback_fn callback) {
-    callback(addr, read_field16(addr, PCI_VENDOR_ID),
-             read_field16(addr, PCI_DEVICE_ID));
+static void enumerate_functions(const struct pci_addr* addr, pci_enumeration_callback_fn callback) {
+    callback(addr, read_field16(addr, PCI_VENDOR_ID), read_field16(addr, PCI_DEVICE_ID));
     if (pci_get_type(addr) == PCI_TYPE_BRIDGE)
         enumerate_bus(read_field8(addr, PCI_SECONDARY_BUS), callback);
 }
 
-static void enumerate_slot(uint8_t bus, uint8_t slot,
-                           pci_enumeration_callback_fn callback) {
+static void enumerate_slot(uint8_t bus, uint8_t slot, pci_enumeration_callback_fn callback) {
+    #if defined(__i386__)
     struct pci_addr addr = {bus, slot, 0};
     if (read_field16(&addr, PCI_VENDOR_ID) == PCI_NONE)
         return;
@@ -73,6 +85,7 @@ static void enumerate_slot(uint8_t bus, uint8_t slot,
         if (read_field16(&addr, PCI_VENDOR_ID) != PCI_NONE)
             enumerate_functions(&addr, callback);
     }
+    #endif
 }
 
 static void enumerate_bus(uint8_t bus, pci_enumeration_callback_fn callback) {
@@ -94,8 +107,7 @@ void pci_enumerate(pci_enumeration_callback_fn callback) {
 }
 
 uint16_t pci_get_type(const struct pci_addr* addr) {
-    return ((uint16_t)read_field8(addr, PCI_CLASS) << 8) |
-           read_field8(addr, PCI_SUBCLASS);
+    return ((uint16_t)read_field8(addr, PCI_CLASS) << 8) | read_field8(addr, PCI_SUBCLASS);
 }
 
 uint32_t pci_get_bar0(const struct pci_addr* addr) {

@@ -10,16 +10,13 @@
 //#include <string.h>
 
 void* sys_mmap(const mmap_params* params) {
-    if (params->length == 0 || params->offset < 0 ||
-        (params->offset % PAGE_SIZE) ||
-        !((params->flags & MAP_PRIVATE) ^ (params->flags & MAP_SHARED)))
+    if (params->length == 0 || params->offset < 0 || (params->offset % PAGE_SIZE) || !((params->flags & MAP_PRIVATE) ^ (params->flags & MAP_SHARED)))
         return ERR_PTR(-EINVAL);
 
     if ((params->flags & MAP_FIXED) || !(params->prot & PROT_READ))
         return ERR_PTR(-ENOTSUP);
 
-    uintptr_t addr =
-        range_allocator_alloc(&current->vaddr_allocator, params->length);
+    uintptr_t addr = range_allocator_alloc(&current->vaddr_allocator, params->length);
     if (IS_ERR(addr))
         return ERR_PTR(addr);
 
@@ -47,14 +44,12 @@ void* sys_mmap(const mmap_params* params) {
     if (S_ISDIR(desc->inode->mode))
         return ERR_PTR(-ENODEV);
 
-    return (void*)file_description_mmap(desc, addr, params->length,
-                                        params->offset, page_flags);
+    return (void*)file_description_mmap(desc, addr, params->length, params->offset, page_flags);
 }
 
 int sys_munmap(void* addr, size_t length) {
     if ((uintptr_t)addr % PAGE_SIZE)
         return -EINVAL;
     paging_unmap((uintptr_t)addr, length);
-    return range_allocator_free(&current->vaddr_allocator, (uintptr_t)addr,
-                                length);
+    return range_allocator_free(&current->vaddr_allocator, (uintptr_t)addr, length);
 }

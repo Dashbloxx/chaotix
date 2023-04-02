@@ -41,8 +41,7 @@ int sys_sched_yield(void) {
 void return_to_userland(registers);
 
 pid_t sys_fork(registers* regs) {
-    struct process* process =
-        kaligned_alloc(alignof(struct process), sizeof(struct process));
+    struct process* process = kaligned_alloc(alignof(struct process), sizeof(struct process));
     if (!process)
         return -ENOMEM;
     *process = (struct process){0};
@@ -73,8 +72,7 @@ pid_t sys_fork(registers* regs) {
     process->cwd_inode = current->cwd_inode;
     inode_ref(process->cwd_inode);
 
-    int rc = file_descriptor_table_clone_from(&process->fd_table,
-                                              &current->fd_table);
+    int rc = file_descriptor_table_clone_from(&process->fd_table, &current->fd_table);
     if (IS_ERR(rc))
         return rc;
 
@@ -111,7 +109,12 @@ struct waitpid_blocker {
     struct process* waited_process;
 };
 
+/*
+ *  This function uses a i?86-specific function, so we'll make the function's definition exclusive to i?86 for now, until we come
+ *  up with an implementation for other architectures...
+ */
 static bool waitpid_should_unblock(struct waitpid_blocker* blocker) {
+    #if defined(__i386__)
     bool int_flag = push_cli();
 
     struct process* prev = NULL;
@@ -157,22 +160,21 @@ static bool waitpid_should_unblock(struct waitpid_blocker* blocker) {
 
     pop_cli(int_flag);
     return true;
+    #else
+    return false;
+    #endif
 }
 
 pid_t sys_waitpid(pid_t pid, int* wstatus, int options) {
     if (options & ~WNOHANG)
         return -ENOTSUP;
 
-    struct waitpid_blocker blocker = {.param_pid = pid,
-                                      .current_pid = current->pid,
-                                      .current_pgid = current->pgid,
-                                      .waited_process = NULL};
+    struct waitpid_blocker blocker = {.param_pid = pid, .current_pid = current->pid, .current_pgid = current->pgid, .waited_process = NULL};
     if (options & WNOHANG) {
         if (!waitpid_should_unblock(&blocker))
             return blocker.waited_process ? 0 : -ECHILD;
     } else {
-        int rc = scheduler_block((should_unblock_fn)waitpid_should_unblock,
-                                 &blocker);
+        int rc = scheduler_block((should_unblock_fn)waitpid_should_unblock, &blocker);
         if (IS_ERR(rc))
             return rc;
     }

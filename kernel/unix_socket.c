@@ -12,14 +12,12 @@ static void unix_socket_destroy_inode(struct inode* inode) {
 
 static ring_buf* get_buf_to_read(unix_socket* socket, file_description* desc) {
     bool is_client = socket->connector_fd == desc;
-    return is_client ? &socket->server_to_client_buf
-                     : &socket->client_to_server_buf;
+    return is_client ? &socket->server_to_client_buf : &socket->client_to_server_buf;
 }
 
 static ring_buf* get_buf_to_write(unix_socket* socket, file_description* desc) {
     bool is_client = socket->connector_fd == desc;
-    return is_client ? &socket->client_to_server_buf
-                     : &socket->server_to_client_buf;
+    return is_client ? &socket->client_to_server_buf : &socket->server_to_client_buf;
 }
 
 static bool read_should_unblock(file_description* desc) {
@@ -28,8 +26,7 @@ static bool read_should_unblock(file_description* desc) {
     return !ring_buf_is_empty(buf);
 }
 
-static ssize_t unix_socket_read(file_description* desc, void* buffer,
-                                size_t count) {
+static ssize_t unix_socket_read(file_description* desc, void* buffer, size_t count) {
     unix_socket* socket = (unix_socket*)desc->inode;
     ring_buf* buf = get_buf_to_read(socket, desc);
 
@@ -55,8 +52,7 @@ static bool write_should_unblock(file_description* desc) {
     return !ring_buf_is_full(buf);
 }
 
-static ssize_t unix_socket_write(file_description* desc, const void* buffer,
-                                 size_t count) {
+static ssize_t unix_socket_write(file_description* desc, const void* buffer, size_t count) {
     unix_socket* socket = (unix_socket*)desc->inode;
     ring_buf* buf = get_buf_to_write(socket, desc);
 
@@ -83,9 +79,7 @@ unix_socket* unix_socket_create(void) {
     *socket = (unix_socket){0};
 
     struct inode* inode = &socket->inode;
-    static file_ops fops = {.destroy_inode = unix_socket_destroy_inode,
-                            .read = unix_socket_read,
-                            .write = unix_socket_write};
+    static file_ops fops = {.destroy_inode = unix_socket_destroy_inode, .read = unix_socket_read, .write = unix_socket_write};
     inode->fops = &fops;
     inode->mode = S_IFSOCK;
     inode->ref_count = 1;
@@ -139,8 +133,7 @@ static bool accept_should_unblock(atomic_size_t* num_pending) {
 }
 
 unix_socket* unix_socket_accept(unix_socket* listener) {
-    int rc = scheduler_block((should_unblock_fn)accept_should_unblock,
-                             &listener->num_pending);
+    int rc = scheduler_block((should_unblock_fn)accept_should_unblock, &listener->num_pending);
     if (IS_ERR(rc))
         return ERR_PTR(rc);
 
@@ -162,6 +155,5 @@ int unix_socket_connect(file_description* connector_fd, unix_socket* listener) {
         return -ECONNREFUSED;
     enqueue_pending(listener, connector);
 
-    return scheduler_block((should_unblock_fn)connect_should_unblock,
-                           &connector->connected);
+    return scheduler_block((should_unblock_fn)connect_should_unblock, &connector->connected);
 }

@@ -141,10 +141,13 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
 
     /*
      *  Initialize the PS/2 driver. Then, create a character device for the PS/2 keyboard and PS/2 mouse.
+     *  Because PS/2 is commonly a i?86-only thing, we limit it to only i?86 when compiling to it.
      */
+    #if defined(__i386__)
     ps2_init();
     create_char_device("/dev/kbd", ps2_keyboard_device_create());
     create_char_device("/dev/psaux", ps2_mouse_device_create());
+    #endif
 
     /*
      *  AC97 isn't really common on other architectures, therefore we just make this a i?86-only thing.
@@ -191,6 +194,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     
     kprintf(F_GREEN "Initialization done\x1b[m\n");
 
+    /* Start a process called `init`, which spawns shells on all TTYs in user mode... */
     ASSERT_OK(process_spawn_kernel_process("userland_init", init));
 
     process_exit(0);
