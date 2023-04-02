@@ -16,91 +16,27 @@ struct fb_info _fb_info;
 char * fb;
 
 /*
- *  Parse TGA bitmap, and return a pointer to an unsigned int array (This function is from OSDev.org).
+ *  A blank button that can be used as a template for exit button, maximize button, and minimize button. If you see `-1`, that just means create a new line...
+ *  We drew this on www.pixilart.com, and then we wrote the color of each pixel down here!
  */
-unsigned int *tga_parse(unsigned char *ptr, int size)
-{
-    unsigned int *data;
-    int i, j, k, x, y, w = (ptr[13] << 8) + ptr[12], h = (ptr[15] << 8) + ptr[14], o = (ptr[11] << 8) + ptr[10];
-    int m = ((ptr[1]? (ptr[7]>>3)*ptr[5] : 0) + 18);
- 
-    if(w<1 || h<1) return NULL;
- 
-    data = (unsigned int*)malloc((w*h+2)*sizeof(unsigned int));
-    if(!data) return NULL;
- 
-    switch(ptr[2]) {
-        case 1:
-            if(ptr[6]!=0 || ptr[4]!=0 || ptr[3]!=0 || (ptr[7]!=24 && ptr[7]!=32)) { free(data); return NULL; }
-            for(y=i=0; y<h; y++) {
-                k = ((!o?h-y-1:y)*w);
-                for(x=0; x<w; x++) {
-                    j = ptr[m + k++]*(ptr[7]>>3) + 18;
-                    data[2 + i++] = ((ptr[7]==32?ptr[j+3]:0xFF) << 24) | (ptr[j+2] << 16) | (ptr[j+1] << 8) | ptr[j];
-                }
-            }
-            break;
-        case 2:
-            if(ptr[5]!=0 || ptr[6]!=0 || ptr[1]!=0 || (ptr[16]!=24 && ptr[16]!=32)) { free(data); return NULL; }
-            for(y=i=0; y<h; y++) {
-                j = ((!o?h-y-1:y)*w*(ptr[16]>>3));
-                for(x=0; x<w; x++) {
-                    data[2 + i++] = ((ptr[16]==32?ptr[j+3]:0xFF) << 24) | (ptr[j+2] << 16) | (ptr[j+1] << 8) | ptr[j];
-                    j += ptr[16]>>3;
-                }
-            }
-            break;
-        case 9:
-            if(ptr[6]!=0 || ptr[4]!=0 || ptr[3]!=0 || (ptr[7]!=24 && ptr[7]!=32)) { free(data); return NULL; }
-            y = i = 0;
-            for(x=0; x<w*h && m<size;) {
-                k = ptr[m++];
-                if(k > 127) {
-                    k -= 127; x += k;
-                    j = ptr[m++]*(ptr[7]>>3) + 18;
-                    while(k--) {
-                        if(!(i%w)) { i=((!o?h-y-1:y)*w); y++; }
-                        data[2 + i++] = ((ptr[7]==32?ptr[j+3]:0xFF) << 24) | (ptr[j+2] << 16) | (ptr[j+1] << 8) | ptr[j];
-                    }
-                } else {
-                    k++; x += k;
-                    while(k--) {
-                        j = ptr[m++]*(ptr[7]>>3) + 18;
-                        if(!(i%w)) { i=((!o?h-y-1:y)*w); y++; }
-                        data[2 + i++] = ((ptr[7]==32?ptr[j+3]:0xFF) << 24) | (ptr[j+2] << 16) | (ptr[j+1] << 8) | ptr[j];
-                    }
-                }
-            }
-            break;
-        case 10:
-            if(ptr[5]!=0 || ptr[6]!=0 || ptr[1]!=0 || (ptr[16]!=24 && ptr[16]!=32)) { free(data); return NULL; }
-            y = i = 0;
-            for(x=0; x<w*h && m<size;) {
-                k = ptr[m++];
-                if(k > 127) {
-                    k -= 127; x += k;
-                    while(k--) {
-                        if(!(i%w)) { i=((!o?h-y-1:y)*w); y++; }
-                        data[2 + i++] = ((ptr[16]==32?ptr[m+3]:0xFF) << 24) | (ptr[m+2] << 16) | (ptr[m+1] << 8) | ptr[m];
-                    }
-                    m += ptr[16]>>3;
-                } else {
-                    k++; x += k;
-                    while(k--) {
-                        if(!(i%w)) { i=((!o?h-y-1:y)*w); y++; }
-                        data[2 + i++] = ((ptr[16]==32?ptr[m+3]:0xFF) << 24) | (ptr[m+2] << 16) | (ptr[m+1] << 8) | ptr[m];
-                        m += ptr[16]>>3;
-                    }
-                }
-            }
-            break;
-        default:
-            free(data); return NULL;
-    }
-    data[0] = w;
-    data[1] = h;
-    return data;
-}
+int icon0[] = {
+    RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(255, 255, 255), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(46, 46, 46), -1,
+    RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), -1
+};
 
 /*
  *  Convert on-screen coordinates to position in framebuffer.
@@ -112,12 +48,26 @@ unsigned int genbufferpos(int x, int y) {
 /*
  *  Draws pixels to screen. These pixels can be the pixels returned by
  */
-void paint_pixels(int x, int y, unsigned int *pixels) {
-    int width = pixels[0];
-    int height = pixels[1];
-    /*
-     *  Let's start off from here tomorrow, my head is hurting...
-     */
+void paint_pixels(int x, int y, int *image, int size) {
+    int width = x;
+    int height = y;
+    for(int i = 0; i < size; i++) {
+        if(image[i] != -1) {
+            /* Looks like we're just drawing a pixel here! */
+            /* Let's draw the pixel... */
+asdasd:
+            *(fb + genbufferpos(width, height)) = image[i] & 255;
+            *(fb + genbufferpos(width, height) + 1) = (image[i] >> 8) & 255;
+            *(fb + genbufferpos(width, height) + 2) = (image[i] >> 16) & 255;
+            width++;
+        }
+        else {
+            /* Looks like we're returning to a new row! */
+            width = x;
+            //height++;
+            goto asdasd;
+        }
+    }
 }
 
 /*
@@ -180,6 +130,8 @@ int main() {
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
     paint_window(25, 25, 400, 100);
+
+    paint_pixels(100, 100, icon0, sizeof(icon0) / sizeof(int));
 
     getchar();
     return EXIT_SUCCESS;

@@ -9,7 +9,7 @@ int main() {
     int k;
     float z[1760];
     char b[1760];
-    printf("\e[?25l\x1b[H\x1b[2J");
+    printf("[H\x1b[2J");
     for (;;) {
         memset(b, 32, 1760);
         memset(z, 0, 7040);
@@ -42,6 +42,7 @@ int main() {
             A += 0.00004;
             B += 0.00002;
         }
+        //usleep(30000);
     }
     return 0;
 }
