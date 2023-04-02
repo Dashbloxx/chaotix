@@ -26,6 +26,12 @@ char * fb;
 unsigned int genbufferpos(int x, int y) {
     return x * 4 + y * _fb_info.pitch;
 }
+
+/*
+ *  REMEMBER: to convert a PNG file to a TGA file that the function below supports, use ImageMagick to convert it with the following
+ *  command:
+ *  1 | convert input.png -depth 8 -type truecolor output.tga
+ */
 void draw_tga(const char *filename, int x, int y, uint8_t *fb, int fb_width) {
     int fd = open(filename, O_RDONLY);
     if (fd == -1) {
@@ -112,7 +118,10 @@ void paint_panel(int pos_x, int pos_y, int size_x, int size_y) {
 void paint_window(int pos_x, int pos_y, int size_x, int size_y) {
     paint_rect(pos_x, pos_y, size_x, size_y, RGB(200, 200, 200));
     paint_rect(pos_x + 2, pos_y + 2, size_x + 2, size_y + 2, RGB(255, 255, 255));
-    paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 20, RGB(0, 0, 150));
+    paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 18, RGB(0, 0, 150));
+    draw_tga("/usr/share/bitmaps/close_up.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
+    draw_tga("/usr/share/bitmaps/maximize_up.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
+    draw_tga("/usr/share/bitmaps/minimize_up.tga", pos_x + size_x - 48, pos_y + 6, fb, _fb_info.width);
 }
 
 int main() {
@@ -142,22 +151,7 @@ int main() {
     /*
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
-    // paint_window(25, 25, 400, 100);
-
-    /*
-     *  REMEMBER: to convert a PNG file to a TGA file that the function below supports, use ImageMagick to convert it with the following
-     *  command:
-     *  1 | convert input.png -depth 8 -type truecolor output.tga
-     */
-    for(;;) {
-        draw_tga("/usr/share/bitmaps/close_up.tga", 5, 5, fb, _fb_info.width);
-        draw_tga("/usr/share/bitmaps/close_down.tga", 5, 5, fb, _fb_info.width);
-        draw_tga("/usr/share/bitmaps/maximize_up.tga", 5 + 16, 5, fb, _fb_info.width);
-        draw_tga("/usr/share/bitmaps/maximize_down.tga", 5 + 16, 5, fb, _fb_info.width);
-        draw_tga("/usr/share/bitmaps/minimize_up.tga", 5 + 32, 5, fb, _fb_info.width);
-        draw_tga("/usr/share/bitmaps/minimize_down.tga", 5 + 32, 5, fb, _fb_info.width);
-    }
-    //draw_tga("/usr/share/bitmaps/close.tga", 5, 5, fb, _fb_info.width);
+    paint_window(25, 25, 400, 100);
 
     getchar();
     return EXIT_SUCCESS;
