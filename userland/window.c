@@ -144,7 +144,7 @@ int main() {
      */
     // paint_window(25, 25, 400, 100);
 
-    draw_tga("/usr/share/bitmaps/close.tga", 5, 5, fb, _fb_info.pitch);
+    draw_tga("/usr/share/bitmaps/close.tga", 5, 5, fb, _fb_info.width);
 
     getchar();
     return EXIT_SUCCESS;
