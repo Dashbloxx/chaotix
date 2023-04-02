@@ -30,6 +30,10 @@ static noreturn void init(void) {
     UNREACHABLE();
 }
 
+/*
+ *  These two objects are very useful for knowing the boundaries of the
+ *  kernel in memory.
+ */
 extern unsigned char kernel_end[];
 extern unsigned char stack_top[];
 
@@ -76,8 +80,13 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     serial_init();
 
     kprintf("\x1b[32mBooted\x1b[m\n");
-    sti();
 
+    /* The STI function is i?86-specific! */
+    #if defined(__i386__)
+    sti();
+    #endif
+
+    /* Print out kernel's boundaries... */
     ASSERT(mb_magic == MULTIBOOT_BOOTLOADER_MAGIC);
     kprintf("Kernel stack top: V0x%x\n", (uintptr_t)stack_top);
     kprintf("Kernel end: V0x%x\n", (uintptr_t)kernel_end);
@@ -91,9 +100,16 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     uintptr_t initrd_size = initrd_mod->mod_end - initrd_mod->mod_start;
 
     /*
+     *  Although paging isn't a i?86-specific thing, we are keeping this
+     *  mechanism for i?86 only for now since setting up paging in other
+     *  architectures isn't the top priority now...
+     */
+    #if defined(__i386__)
+    /*
      *  Initialize paging. Paging is a mechanism found in the x86 & x86_64 architecture (x86 & x86_64 specific) which allows to be more memory efficient.
      */
     paging_init(mb_info);
+    #endif
 
     ASSERT_OK(vfs_mount(ROOT_DIR, tmpfs_create_root()));
 
@@ -164,7 +180,15 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     syscall_init();
     scheduler_init();
     time_init();
+    
+    /* 
+     *  PIT is i?86-specific, so we make this work only when compiling
+     *  for an i?86 platform...
+     */
+    #if defined(__i386__)
     pit_init();
+    #endif
+    
     kprintf(F_GREEN "Initialization done\x1b[m\n");
 
     ASSERT_OK(process_spawn_kernel_process("userland_init", init));

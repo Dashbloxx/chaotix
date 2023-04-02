@@ -4,6 +4,11 @@
 #include "system.h"
 #include <common/extra.h>
 
+/*
+ *  This is also i?86-specific code, although there are mechanisms
+ *  similar to IRQs that work on other architectures...
+ */
+#if defined(__i386__)
 #define PIC1_CMD 0x20
 #define PIC1_DATA 0x21
 #define PIC2_CMD 0xa0
@@ -82,3 +87,4 @@ void irq_init(void) {
 
     idt_flush();
 }
+#endif

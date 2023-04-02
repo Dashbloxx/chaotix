@@ -4,6 +4,12 @@
 #include "forward.h"
 #include <stdbool.h>
 
+/*
+ *  Interrupts are not a i?86-specific thing, but the code inside the
+ *  preprocessor macro below defines interrupts for an i?86 machine...
+ */
+#if defined(__i386__)
+
 #define IRQ(i) (0x20 + i)
 
 void idt_init(void);
@@ -17,8 +23,7 @@ enum {
     TRAP_GATE32 = 0xf,
 };
 
-void idt_set_gate(uint8_t idx, uint32_t base, uint16_t segment_selector,
-                  uint8_t gate_type, uint8_t dpl);
+void idt_set_gate(uint8_t idx, uint32_t base, uint16_t segment_selector, uint8_t gate_type, uint8_t dpl);
 void idt_set_gate_user_callable(uint8_t idx);
 void idt_flush(void);
 
@@ -38,3 +43,5 @@ static inline void pop_cli(bool was_enabled) {
     if (was_enabled)
         sti();
 }
+
+#endif

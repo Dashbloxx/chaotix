@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ *  Not sure if this is i?86-exclusive, so we're making this for i?86
+ *  only (for now).
+ */
+
+#if defined(__i386__)
 #define ENUMERATE_ISR_STUBS(F)                                                 \
     F(17)                                                                      \
     F(18)                                                                      \
@@ -240,3 +246,4 @@
     F(253)                                                                     \
     F(254)                                                                     \
     F(255)
+#endif
