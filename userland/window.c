@@ -144,6 +144,11 @@ int main() {
      */
     // paint_window(25, 25, 400, 100);
 
+    /*
+     *  REMEMBER: to convert a PNG file to a TGA file that the function below supports, use ImageMagick to convert it with the following
+     *  command:
+     *  1 | convert input.png -depth 8 -type truecolor output.tga
+     */
     draw_tga("/usr/share/bitmaps/close.tga", 5, 5, fb, _fb_info.width);
 
     getchar();
