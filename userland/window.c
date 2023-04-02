@@ -149,7 +149,15 @@ int main() {
      *  command:
      *  1 | convert input.png -depth 8 -type truecolor output.tga
      */
-    draw_tga("/usr/share/bitmaps/close.tga", 5, 5, fb, _fb_info.width);
+    for(;;) {
+        draw_tga("/usr/share/bitmaps/close_up.tga", 5, 5, fb, _fb_info.width);
+        draw_tga("/usr/share/bitmaps/close_down.tga", 5, 5, fb, _fb_info.width);
+        draw_tga("/usr/share/bitmaps/maximize_up.tga", 5 + 16, 5, fb, _fb_info.width);
+        draw_tga("/usr/share/bitmaps/maximize_down.tga", 5 + 16, 5, fb, _fb_info.width);
+        draw_tga("/usr/share/bitmaps/minimize_up.tga", 5 + 32, 5, fb, _fb_info.width);
+        draw_tga("/usr/share/bitmaps/minimize_down.tga", 5 + 32, 5, fb, _fb_info.width);
+    }
+    //draw_tga("/usr/share/bitmaps/close.tga", 5, 5, fb, _fb_info.width);
 
     getchar();
     return EXIT_SUCCESS;
