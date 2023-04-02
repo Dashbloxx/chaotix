@@ -5,9 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <escp.h>
+
+#define TGA_HEADER_SIZE 18
+#define TGA_DATA_OFFSET 18
 
 #define RGBA(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define RGB(r, g, b) RGBA(r, g, b, 255U)
@@ -16,58 +21,66 @@ struct fb_info _fb_info;
 char * fb;
 
 /*
- *  A blank button that can be used as a template for exit button, maximize button, and minimize button. If you see `-1`, that just means create a new line...
- *  We drew this on www.pixilart.com, and then we wrote the color of each pixel down here!
- */
-int icon0[] = {
-    RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(255, 255, 255), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(153, 153, 153), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(255, 255, 255), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(97, 97, 97), RGB(46, 46, 46), -1,
-    RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), RGB(46, 46, 46), -1
-};
-
-/*
  *  Convert on-screen coordinates to position in framebuffer.
  */
 unsigned int genbufferpos(int x, int y) {
     return x * 4 + y * _fb_info.pitch;
 }
+void draw_tga(const char *filename, int x, int y, uint8_t *fb, int fb_width) {
+    int fd = open(filename, O_RDONLY);
+    if (fd == -1) {
+        perror("Error opening file");
+        return;
+    }
 
-/*
- *  Draws pixels to screen. These pixels can be the pixels returned by
- */
-void paint_pixels(int x, int y, int *image, int size) {
-    int width = x;
-    int height = y;
-    for(int i = 0; i < size; i++) {
-        if(image[i] != -1) {
-            /* Looks like we're just drawing a pixel here! */
-            /* Let's draw the pixel... */
-asdasd:
-            *(fb + genbufferpos(width, height)) = image[i] & 255;
-            *(fb + genbufferpos(width, height) + 1) = (image[i] >> 8) & 255;
-            *(fb + genbufferpos(width, height) + 2) = (image[i] >> 16) & 255;
-            width++;
-        }
-        else {
-            /* Looks like we're returning to a new row! */
-            width = x;
-            //height++;
-            goto asdasd;
+    uint8_t header[TGA_HEADER_SIZE];
+    if (read(fd, header, TGA_HEADER_SIZE) != TGA_HEADER_SIZE) {
+        perror("Error reading TGA header");
+        close(fd);
+        return;
+    }
+
+    int width = header[12] + (header[13] << 8);
+    int height = header[14] + (header[15] << 8);
+    int bpp = header[16] >> 3;
+
+    if (bpp != 3) {
+        printf("Error: only 24-bit RGB TGA files are supported\n");
+        close(fd);
+        return;
+    }
+
+    int image_size = width * height * bpp;
+    uint8_t *data = malloc(image_size);
+
+    if (lseek(fd, TGA_DATA_OFFSET, SEEK_SET) == -1) {
+        perror("Error seeking to TGA data");
+        free(data);
+        close(fd);
+        return;
+    }
+
+    if (read(fd, data, image_size) != image_size) {
+        perror("Error reading TGA data");
+        free(data);
+        close(fd);
+        return;
+    }
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            int pixel_offset = i * width * bpp + j * bpp;
+            int fb_offset = (y + i) * fb_width * 4 + (x + j) * 4;
+
+            fb[fb_offset] = data[pixel_offset + 2];     // Red
+            fb[fb_offset + 1] = data[pixel_offset + 1]; // Green
+            fb[fb_offset + 2] = data[pixel_offset];     // Blue
+            fb[fb_offset + 3] = 0xFF;                   // Alpha
         }
     }
+
+    free(data);
+    close(fd);
 }
 
 /*
@@ -129,9 +142,9 @@ int main() {
     /*
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
-    paint_window(25, 25, 400, 100);
+    // paint_window(25, 25, 400, 100);
 
-    paint_pixels(100, 100, icon0, sizeof(icon0) / sizeof(int));
+    draw_tga("/usr/share/bitmaps/close.tga", 5, 5, fb, _fb_info.pitch);
 
     getchar();
     return EXIT_SUCCESS;

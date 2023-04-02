@@ -6,6 +6,7 @@
 	"files.associations": {
 		"system.h": "c",
 		"pci.h": "c",
-		"asm_wrapper.h": "c"
+		"asm_wrapper.h": "c",
+		"random": "c"
 	}
 }
