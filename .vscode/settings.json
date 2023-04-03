@@ -7,6 +7,13 @@
 		"system.h": "c",
 		"pci.h": "c",
 		"asm_wrapper.h": "c",
-		"random": "c"
+		"random": "c",
+		"signum.h": "c",
+		"err.h": "c",
+		"memory.h": "c",
+		"dentry.h": "c",
+		"stddef.h": "c",
+		"fcntl.h": "c",
+		"stdio.h": "c"
 	}
 }

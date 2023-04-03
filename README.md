@@ -36,4 +36,4 @@ Magma supports multiboot, so you can also combine magma's kernel & initrd with a
 
 The Magma operating system is licensed under the **MIT License**.
 
-See [LICENSE](LICENSE) to view the license.
+See [LICENSE](LICENSE) to view the license. Also, take note that all files contain the license & copyright notice, unless if they are licensed under a license different from the MIT license.
