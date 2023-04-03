@@ -10,6 +10,8 @@ LD := i686-elf-ld
 OBJS := \
 	ac97.o \
 	boot.o \
+	nic.o \
+	network.o \
 	cmdline.o \
 	console/fb_console.o \
 	console/psf.o \

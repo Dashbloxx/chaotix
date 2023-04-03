@@ -1,0 +1,40 @@
+#pragma once
+
+/*
+ *  This file defines some basic structures that are related to networking. When talking about networking here, we're talking about
+ *  networking between different computers, not UNIX sockets...
+ */
+
+/* IP protocol number for TCP! */
+#define IP_PROTOCOL_TCP 6
+
+/* This structure defines the IP header format... */
+struct ip_header {
+    unsigned char version;
+    unsigned char ihl;
+    unsigned short total_len;
+    unsigned short id;
+    unsigned short flags;
+    unsigned char ttl;
+    unsigned char protocol;
+    unsigned short checksum;
+    unsigned int src_ip;
+    unsigned int dest_ip;
+};
+
+/* This structure defines the TCP header format... */
+struct tcp_header {
+    unsigned short src_port;
+    unsigned short dest_port;
+    unsigned int seq_num;
+    unsigned int ack_num;
+    unsigned char data_offset;
+    unsigned char flags;
+    unsigned short window_size;
+    unsigned short checksum;
+    unsigned short urgent_pointer;
+};
+
+void net_init();
+void net_send_packet(unsigned int dest_ip, unsigned char protocol, unsigned char *data, int len);
+void net_recv_packet(unsigned char *packet, int len);
