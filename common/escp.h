@@ -19,6 +19,8 @@
 #define F_YELLOW        "\x1b[33m"
 #define F_BLUE          "\x1b[34m"
 #define F_MAGENTA       "\x1b[35m"
+#define F_CYAN          "\x1b[36m"
+#define F_WHITE         "\x1b[37m"
 
 #define B_DEFAULT_COLOR "\x1b[49m"
 #define B_BLACK         "\x1b[40m"
@@ -27,3 +29,5 @@
 #define B_YELLOW        "\x1b[43m"
 #define B_BLUE          "\x1b[44m"
 #define B_MAGENTA       "\x1b[45m"
+#define B_CYAN          "\x1b[46m"
+#define B_WHITE         "\x1b[47m"
