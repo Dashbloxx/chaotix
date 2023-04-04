@@ -41,7 +41,9 @@
  */
 
 /* Use this function to initiailize the corresponding ethernet driver... */
-void eth_driver_init() { }
+void eth_driver_init() {
+    
+}
 
 /* Send a packet through ethernet... */
 void eth_send_packet(unsigned char *packet, int len) { }

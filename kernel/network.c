@@ -34,10 +34,12 @@
  */
 
 #include "network.h"
+#include "nic.h"
 
 /* Initialize the network stack... */
 void net_init() {
-  /* Initialize drivers here! */
+    /* Initialize drivers here! */
+    eth_driver_init();
 }
 
 /* Send a packet to an IP address... */

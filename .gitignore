@@ -9,5 +9,6 @@ compile_flags.txt
 !/disk/boot/grub
 /disk_image
 *.iso
-userland/window.c
+/userland/window.c
 **/*.iso
+/userland/as.c
