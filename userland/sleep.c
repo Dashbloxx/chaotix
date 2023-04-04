@@ -47,7 +47,7 @@ int main(int argc, char* const argv[]) {
     }
 
     int val = atoi(argv[1]);
-    if (val < INT_MIN) {
+    if (val < 0) { /* We'd expect if user pass less than zero, but only passing zero is accepted */
         dprintf(STDERR_FILENO, "Input time is lower than minimum interger length\n");
         return EXIT_FAILURE;
     }
