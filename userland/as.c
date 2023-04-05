@@ -3,6 +3,14 @@
 #include <string.h>
 #include <escp.h>
 
+/*
+ *  This is a basic assembler written in C. The plan for magma is for it to have compatibility, but to also have it's own custom toolchain
+ *  where in the future is capable of building itself. For now, the assembler is being developed.
+ *  For now though, all the assembler does is replace instructions with their opcodes.
+ *  Here is an example of the assembler's usage:
+ *      $ as i386 <instruction(s)>
+ */
+
 /* Basic list of architectures... */
 enum {
     i386,
@@ -10,36 +18,160 @@ enum {
     aarch64
 };
 
+/* Basic type that represents different architectures, using the enum above... */
 typedef unsigned char arch_t;
 
-int parse_asm(arch_t architecture, char *assembly, char *binary) {
+/*
+ *  This function accepts four arguments; the first one asking which architecture to assemble for, the second one containing the
+ *  options (3 characters), the third containing the assembly, and the fourth containing a pointer to a buffer where the binary
+ *  output code is to be stored...
+ * 
+ *  If the `options` pointed value is `str`, it will just convert the assembly to opcodes, but as a string. If the `options` pointed
+ *  value is `bin`, it will convert the assembly to actual raw binary...
+ */
+int parse_asm(arch_t architecture, char options[3], char *assembly, void *binary) {
     if (architecture == i386) {
+        /* Handle i386 instructions... */
         if (strcmp(assembly, "mov") == 0) {
-            strcat(binary, "B8 ");
+            if(options == "str") {
+                strcat(binary, "0xB8 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0xb8);
+            }
         }
         else if (strcmp(assembly, "add") == 0) {
-            strcat(binary, "03 ");
+            if(options == "str") {
+                strcat(binary, "0x03 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x03);
+            }
         }
         else if (strcmp(assembly, "sub") == 0) {
-            strcat(binary, "2B ");
+            if(options == "str") {
+                strcat(binary, "0x2B ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x2b);
+            }
         }
         else if (strcmp(assembly, "cmp") == 0) {
-            strcat(binary, "3B ");
+            if(options == "str") {
+                strcat(binary, "0x3B ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x3b);
+            }
         }
         else if (strcmp(assembly, "jmp") == 0) {
-            strcat(binary, "E9 ");
+            if(options == "str") {
+                strcat(binary, "0xE9 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0xe9);
+            }
         }
         else if (strcmp(assembly, "call") == 0) {
-            strcat(binary, "E8 ");
+            if(options == "str") {
+                strcat(binary, "0xE8 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0xe8);
+            }
         }
         else if (strcmp(assembly, "ret") == 0) {
-            strcat(binary, "C3 ");
+            if(options == "str") {
+                strcat(binary, "0xC3 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0xc3);
+            }
         }
         else if (strcmp(assembly, "push") == 0) {
-            strcat(binary, "50 ");
+            if(options == "str") {
+                strcat(binary, "0x50 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x50);
+            }
         }
         else if (strcmp(assembly, "pop") == 0) {
-            strcat(binary, "58 ");
+            if(options == "str") {
+                strcat(binary, "0x58 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x58);
+            }
+        }
+        /* Handle i386 registers... */
+        else if (strcmp(assembly, "eax") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x00 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x00);
+            }
+        }
+        else if (strcmp(assembly, "ebx") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x03 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x03);
+            }
+        }
+        else if (strcmp(assembly, "ecx") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x01 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x01);
+            }
+        }
+        else if (strcmp(assembly, "edx") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x02 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x02);
+            }
+        }
+        else if (strcmp(assembly, "esi") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x06 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x06);
+            }
+        }
+        else if (strcmp(assembly, "edi") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x07 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x07);
+            }
+        }
+        else if (strcmp(assembly, "ebp") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x05 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x05);
+            }
+        }
+        else if (strcmp(assembly, "esp") == 0) {
+            if(options == "str") {
+                strcat(binary, "0x04 ");
+            }
+            else if(options == "bin") {
+                strcat(binary, 0x04);
+            }
+        }
+        /* Handle unknown object... */
+        else {
+            return -3;
         }
     }
     else if (architecture == amd64) {
@@ -87,7 +219,7 @@ int main(int argc, const char *argv[]) {
         strncpy(instruction, assembly + i, 3);
         instruction[3] = '\0';
         if (strcmp(argv[1], "i386") == 0) {
-            parse_asm(i386, instruction, binary);
+            parse_asm(i386, "str", instruction, binary);
         }
         else {
             /*
