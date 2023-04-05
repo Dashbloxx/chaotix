@@ -38,13 +38,25 @@
 #include <time.h>
 #include <unistd.h>
 #include <escp.h>
+#include <limits.h>
 
 int main(int argc, char* const argv[]) {
     if (argc != 2) {
         dprintf(STDERR_FILENO, "%susage: %ssleep %s<%stime-in-seconds%s>%s\n", F_MAGENTA, F_GREEN, F_BLUE, F_GREEN, F_BLUE, RESET);
         return EXIT_FAILURE;
     }
-    struct timespec req = {.tv_sec = atoi(argv[1]), .tv_nsec = 0};
+
+    int val = atoi(argv[1]);
+    if (val < 0) { /* We'd expect if user pass less than zero, but only passing zero is accepted */
+        dprintf(STDERR_FILENO, "Input time is lower than minimum interger length\n");
+        return EXIT_FAILURE;
+    }
+    if (val > INT_MAX) {
+        dprintf(STDERR_FILENO, "Input time is higher than maximum interger length\n");
+        return EXIT_FAILURE;
+    }
+
+    struct timespec req = {.tv_sec = val, .tv_nsec = 0};
     if (nanosleep(&req, NULL) < 0) {
         perror("nanosleep");
         return EXIT_FAILURE;
