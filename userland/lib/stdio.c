@@ -160,3 +160,7 @@ FILE *fopen(const char *filename, const char *mode) {
         return NULL;
     }
 }
+
+int fclose(FILE *file) {
+    return close(file->fd);
+}
