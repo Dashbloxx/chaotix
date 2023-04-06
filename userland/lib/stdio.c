@@ -161,6 +161,26 @@ FILE *fopen(const char *filename, const char *mode) {
     }
 }
 
+/* Close a file by it's `FILE` struct... */
 int fclose(FILE *file) {
     return close(file->fd);
+}
+
+/* Write to a file by it's `FILE` struct... */
+unsigned int fwrite(const void *ptr, unsigned int size, unsigned int count, FILE *stream) {
+    unsigned int total_bytes_written = 0;
+
+    /* Calculate the amount of bytes that are to be written... */
+    unsigned int num_bytes_to_write = size * count;
+
+    int bytes_written = write(stream->fd, ptr, num_bytes_to_write);
+
+    /* Return an error of the amount if bytes written are less than zero... */
+    if (bytes_written < 0) {
+        return -1;
+    }
+
+    /* Update and return the amount of bytes that were written... */
+    total_bytes_written += bytes_written;
+    return total_bytes_written;
 }
