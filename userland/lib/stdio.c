@@ -37,6 +37,7 @@
 #include "errno.h"
 #include "string.h"
 #include "unistd.h"
+#include "fcntl.h"
 
 int putchar(int ch) {
     char c = ch;
@@ -97,4 +98,65 @@ int remove(const char* pathname) {
     if (errno == EISDIR)
         return rmdir(pathname);
     return -1;
+}
+
+FILE *fopen(const char *filename, const char *mode) {
+    if(strcmp(mode, "r")) {
+        FILE *fp;
+        int fd = open(filename, O_RDONLY, mode);
+        /* Check if `open` returned an error (-1). If not, just set the file struct's `fd` to what `open` returned. */
+        if(fd != -1) {
+            fp->fd = fd;
+        }
+        else {
+            return NULL;
+        }
+        /* Now, if everything went fine, we can return the file struct... */
+        return fp;
+    }
+    else if(strcmp(mode, "w")) {
+        FILE *fp;
+        /* This time, we ask `open` to make the file write-only, and to create it if it doesn't exist... */
+        int fd = open(filename, O_WRONLY | O_CREAT, mode);
+        /* Check if `open` returned an error (-1). If not, just set the file struct's `fd` to what `open` returned. */
+        if(fd != -1) {
+            fp->fd = fd;
+        }
+        else {
+            return NULL;
+        }
+        /* Now, if everything went fine, we can return the file struct... */
+        return fp;
+    }
+    else if(strcmp(mode, "r+")) {
+        FILE *fp;
+        /* This time, we ask `open` to make the file write-only, and to create it if it doesn't exist... */
+        int fd = open(filename, O_RDWR, mode);
+        /* Check if `open` returned an error (-1). If not, just set the file struct's `fd` to what `open` returned. */
+        if(fd != -1) {
+            fp->fd = fd;
+        }
+        else {
+            return NULL;
+        }
+        /* Now, if everything went fine, we can return the file struct... */
+        return fp;
+    }
+    else if(strcmp(mode, "w+")) {
+        FILE *fp;
+        /* This time, we ask `open` to make the file write-only, and to create it if it doesn't exist... */
+        int fd = open(filename, O_RDWR | O_CREAT, mode);
+        /* Check if `open` returned an error (-1). If not, just set the file struct's `fd` to what `open` returned. */
+        if(fd != -1) {
+            fp->fd = fd;
+        }
+        else {
+            return NULL;
+        }
+        /* Now, if everything went fine, we can return the file struct... */
+        return fp;
+    }
+    else {
+        return NULL;
+    }
 }
