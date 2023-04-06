@@ -38,6 +38,22 @@
 #include <common/stdio.h>
 #include <kernel/api/stdio.h>
 
+/*
+ *  This struct contains all the values that you'll usually find in the `FILE` struct type. Well, the type is actually `file_t`, but
+ *  then theres a macro that defines `FILE` as `file_t`...
+ */
+typedef struct {
+    int fd; /* Contains a unique integer that represents the file. Usually this integer can be returned by the `open` syscall... */
+    int mode; /* This contains the mode in which the file is opened... */
+    int error; /* This is to contain an error code, if an error happens... */
+    unsigned char *buffer; /* The buffer is stored in RAM, and is to have the file's contents replicated into this buffer... */
+    unsigned int buffer_size; /* This contains the size that the buffer should be. */
+    unsigned int position; /* The current position in file, whether it's being read or written to... */
+} file_t;
+
+/* Let's define `FILE` the right way. If we want it capitalized, let's use a macro to do it! */
+#define FILE file_t
+
 int putchar(int ch);
 int puts(const char* str);
 int printf(const char* format, ...);
