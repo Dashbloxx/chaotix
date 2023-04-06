@@ -68,3 +68,7 @@ int getchar(void);
 int remove(const char* pathname);
 
 int dbgputs(const char* str);
+
+FILE *fopen(const char *filename, const char *mode);
+int fclose(FILE *file);
+unsigned int fwrite(const void *ptr, unsigned int size, unsigned int count, FILE *stream);
