@@ -3,7 +3,7 @@
 Magma (formerly known as Psychix) is a UNIX-like operating system written in C that uses code from [Xv6](https://github.com/mit-pdos/xv6-public) and [Yagura](https://github.com/mosmeh/yagura).
 ## Supported architectures
 - [X] [`i?86`](https://en.wikipedia.org/wiki/X86)
-- [-] [`amd64`](https://en.wikipedia.org/wiki/X86-64)
+- [ ] [`amd64`](https://en.wikipedia.org/wiki/X86-64)
 - [ ] [`ARM`](https://en.wikipedia.org/wiki/ARM_architecture_family)
 - [ ] [`RISC-V`](https://riscv.org/)
 - [ ] [`PowerPC`](https://en.wikipedia.org/wiki/PowerPC)
