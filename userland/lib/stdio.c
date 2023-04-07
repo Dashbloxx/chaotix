@@ -184,3 +184,30 @@ unsigned int fwrite(const void *ptr, unsigned int size, unsigned int count, FILE
     total_bytes_written += bytes_written;
     return total_bytes_written;
 }
+
+/* Read from file using `FILE` type... */
+unsigned int fread(void *ptr, unsigned int size, unsigned int count, FILE *stream) {
+    unsigned int total_bytes = size * count;
+    unsigned int bytes_read = 0;
+    char *buffer = (char *) ptr;
+
+    /* Get unique number that represents file... */
+    int fd = stream->fd;
+
+    while (bytes_read < total_bytes) {
+        unsigned int remaining_bytes = total_bytes - bytes_read;
+        int result = read(fd, buffer + bytes_read, remaining_bytes);
+
+        if (result < 0) {
+            break;
+        }
+
+        bytes_read += result;
+
+        if (result == 0) {
+            break;
+        }
+    }
+
+    return bytes_read / size;
+}
