@@ -33,7 +33,7 @@
  *  THE SOFTWARE.
  */
 
-#if defined(__i386__)
+#if defined(__i386__) && !defined(__x86_64__)
 
 #include "boot_defs.h"
 #define ASM_FILE

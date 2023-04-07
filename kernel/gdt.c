@@ -56,7 +56,7 @@ typedef struct gdt_pointer {
     #endif
 } __attribute__((packed)) gdt_pointer;
 
-#if defined(__x86_64__)
+#if defined(__i386__) && !defined(__x86_64__)
 struct tss {
     uint32_t prev_tss;
     uint32_t esp0, ss0, esp1, ss1, esp2, ss2;
@@ -66,7 +66,7 @@ struct tss {
     uint32_t ldt;
     uint16_t trap, iomap_base;
 } __attribute__((packed));
-#elif defined(__i386__) && !defined(__x86_64__)
+#elif defined(__x86_64__)
 struct tss {
     uint32_t prev_tss;
     uint32_t reserved0;
