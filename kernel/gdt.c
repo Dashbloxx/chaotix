@@ -56,6 +56,7 @@ typedef struct gdt_pointer {
     #endif
 } __attribute__((packed)) gdt_pointer;
 
+#if defined(__x86_64__)
 struct tss {
     uint32_t prev_tss;
     uint32_t esp0, ss0, esp1, ss1, esp2, ss2;
@@ -65,17 +66,50 @@ struct tss {
     uint32_t ldt;
     uint16_t trap, iomap_base;
 } __attribute__((packed));
+#elif defined(__i386__) && !defined(__x86_64__)
+struct tss {
+    uint32_t prev_tss;
+    uint32_t reserved0;
+    uint64_t rsp0;
+    uint64_t rsp1;
+    uint64_t rsp2;
+    uint64_t reserved1;
+    uint64_t ist1;
+    uint64_t ist2;
+    uint64_t ist3;
+    uint64_t ist4;
+    uint64_t ist5;
+    uint64_t ist6;
+    uint64_t ist7;
+    uint64_t reserved2;
+    uint16_t reserved3;
+    uint16_t io_map_base;
+} __attribute__((packed));
+#endif
 
-#define NUM_GDT_ENTRIES 6
+#define NUM_GDT_ENTRIES 7
 static gdt_descriptor gdt[NUM_GDT_ENTRIES];
 static struct tss tss;
 static gdt_pointer gdtr;
 
 #if defined(__x86_64__)
-static void gdt_set_gate(size_t idx, uint64_t base, uint32_t limit, uint8_t access, uint8_t flags) {
+static void gdt_set_gate(size_t idx, uint64_t base, uint64_t limit, uint8_t access, uint8_t flags) {
+    gdt_descriptor* entry = gdt + idx;
+
+    entry->base_lo = base & 0xffff;
+    entry->base_mid = (base >> 16) & 0xff;
+    entry->base_hi = (base >> 24) & 0xff;
+    entry->base_hi |= (base >> 32) & 0xffffffffull;
+
+    entry->limit_lo = limit & 0xffff;
+    entry->limit_hi = (limit >> 16) & 0xf;
+    entry->limit_hi |= (limit >> 32) & 0xf0000;
+
+    entry->access = access;
+    entry->flags = flags & 0xf;
+}
 #elif defined(__i386__) && !defined(__x86_64__)
 static void gdt_set_gate(size_t idx, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
-#endif
     gdt_descriptor* entry = gdt + idx;
 
     entry->base_lo = base & 0xffff;
@@ -88,16 +122,50 @@ static void gdt_set_gate(size_t idx, uint32_t base, uint32_t limit, uint8_t acce
     entry->access = access;
     entry->flags = flags & 0xf;
 }
+#endif
 
-void gdt_init(void) {
+#if defined(__x86_64__)
+void gdt_init() {
+    gdtr.limit = NUM_GDT_ENTRIES * sizeof(gdt_descriptor) - 1;
+    gdtr.base = (uint64_t)&gdt;
+
+    gdt_set_gate(0, 0, 0, 0, 0);
+    gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0x20); // kernel code
+    gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0x00); // kernel data
+    gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0x20); // user code
+    gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0x00); // user data
+    gdt_set_gate(5, (uint64_t)&tss, sizeof(struct tss), 0x89, 0x00); // TSS
+
+    tss.io_map_base = sizeof(struct tss);
+
+    // flush GDT
+    __asm__ volatile("lgdt %0" ::"m"(gdtr));
+
+    // load kernel data segment
+    __asm__ volatile("mov $0x10, %ax\n"
+                     "mov %ax, %ds\n"
+                     "mov %ax, %es\n"
+                     "mov %ax, %fs\n"
+                     "mov %ax, %gs\n"
+                     "mov %ax, %ss\n");
+
+    // load kernel code segment
+    __asm__ volatile("ljmp $0x08, $1f\n"
+                     "1:");
+
+    // load TSS segment
+    __asm__ volatile("ltr %%ax" ::"a"(0x28));
+}
+#elif defined(__i386__) && !defined(__x86_64__)
+void gdt_init() {
     gdtr.limit = NUM_GDT_ENTRIES * sizeof(gdt_descriptor) - 1;
     gdtr.base = (uint32_t)&gdt;
 
     gdt_set_gate(0, 0, 0, 0, 0);
-    gdt_set_gate(1, 0, 0xfffff, 0x9a, 0xc);                       // kernel code
-    gdt_set_gate(2, 0, 0xfffff, 0x92, 0xc);                       // kernel data
-    gdt_set_gate(3, 0, 0xfffff, 0xfa, 0xc);                       // user code
-    gdt_set_gate(4, 0, 0xfffff, 0xf2, 0xc);                       // user data
+    gdt_set_gate(1, 0, 0xfffff, 0x9a, 0xc); // kernel code
+    gdt_set_gate(2, 0, 0xfffff, 0x92, 0xc); // kernel data
+    gdt_set_gate(3, 0, 0xfffff, 0xfa, 0xc); // user code
+    gdt_set_gate(4, 0, 0xfffff, 0xf2, 0xc); // user data
     gdt_set_gate(5, (uint32_t)&tss, sizeof(struct tss), 0xe9, 0); // TSS
 
     tss.ss0 = 0x10;
@@ -119,6 +187,11 @@ void gdt_init(void) {
     // flush TSS
     __asm__ volatile("ltr %%ax" ::"a"(0x2b));
 }
+#endif
 
+#if defined(__x86_64__)
+void gdt_set_kernel_stack(uintptr_t stack_top) { tss.rsp[0] = stack_top; }
+#elif defined(__i386__) && !defined(__x86_64__)
 void gdt_set_kernel_stack(uintptr_t stack_top) { tss.esp0 = stack_top; }
+#endif
 #endif

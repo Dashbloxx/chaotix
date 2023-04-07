@@ -43,7 +43,6 @@
 #include "system.h"
 
 #if defined(__i386__)
-
 typedef struct idt_descriptor {
     uint16_t base_lo : 16;
     uint16_t segment_selector : 16;
@@ -221,5 +220,4 @@ void idt_init(void) {
 
     idt_flush();
 }
-
 #endif
