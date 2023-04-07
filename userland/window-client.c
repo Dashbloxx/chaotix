@@ -271,6 +271,22 @@ void copy_to_physfb(uint32_t vfb_index) {
     }
 }
 
+/* Move and/or resize virtual framebuffer*/
+void translate_vfb(uint32_t vfb_index, uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+    virt_fb *vfb = &vfb_array[vfb_index];
+    
+    /* De-allocate old virtual framebuffer's data... r*/
+    free(vfb->data);
+    vfb->x = x;
+    vfb->y = y;
+    vfb->width = width;
+    vfb->height = height;
+
+    /* Calculate new pitch and allocate memory for new virtual framebuffer's memory... */
+    vfb->pitch = width * sizeof(uint32_t);
+    vfb->data = (uint8_t *) malloc(vfb->pitch * height);
+}
+
 int main() {
     /*
      *  Here we open the framebuffer character device, and get a pointer to the framebuffer. After getting a pointer to the framebuffer, we simply close the
@@ -307,6 +323,12 @@ int main() {
         for(int y = 0; y <= 10; y++)
             draw_to_vfb(0, x, y, RGB(255, 255, 255));
 
+    translate_vfb(0, 50, 50, 200, 200);
+
+    for(int x = 0; x <= 10; x++)
+        for(int y = 0; y <= 10; y++)
+            draw_to_vfb(0, x, y, RGB(255, 255, 255));
+            
     copy_to_physfb(0);
 
     getchar();
