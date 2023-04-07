@@ -41,6 +41,7 @@
 #include "hid/hid.h"
 #include "interrupts.h"
 #include "kprintf.h"
+#include "random.h"
 #include "memory/memory.h"
 #include "multiboot.h"
 #include "panic.h"
@@ -159,6 +160,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     create_char_device("/dev/null", null_device_create());
     create_char_device("/dev/zero", zero_device_create());
     create_char_device("/dev/full", full_device_create());
+    create_char_device("/dev/random", random_device_create());
 
     /*
      *  Initialize the framebuffer using the information given by the multiboot header. If the framebuffer initialization is successful, then create a character device

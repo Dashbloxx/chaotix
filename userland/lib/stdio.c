@@ -187,6 +187,7 @@ unsigned int fwrite(const void *ptr, unsigned int size, unsigned int count, FILE
 
 /* Read from file using `FILE` type... */
 unsigned int fread(void *ptr, unsigned int size, unsigned int count, FILE *stream) {
+    /* Calculate the amount of total bytes by multiplying the size of items by count of items... */
     unsigned int total_bytes = size * count;
     unsigned int bytes_read = 0;
     char *buffer = (char *) ptr;

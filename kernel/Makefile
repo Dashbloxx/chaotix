@@ -11,6 +11,7 @@ OBJS := \
 	ac97.o \
 	boot.o \
 	nic.o \
+	random.o \
 	network.o \
 	cmdline.o \
 	console/fb_console.o \
