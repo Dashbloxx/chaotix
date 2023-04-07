@@ -53,8 +53,19 @@
 #define RGBA(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define RGB(r, g, b) RGBA(r, g, b, 255U)
 
+/* This struct defines the info for a virtual framebuffer, which is a framebuffer that can be embedded inside a physical framebuffer... */
+typedef struct {
+    int width;
+    int height;
+    int x;
+    int y;
+    int pitch;
+    unsigned char* data;
+} virt_fb;
+
 struct fb_info _fb_info;
 char * fb;
+virt_fb vfb_array[256];
 
 struct psf_header {
     unsigned int magic;
@@ -74,6 +85,25 @@ unsigned int genbufferpos(int x, int y) {
     return x * 4 + y * _fb_info.pitch;
 }
 
+/* Initialize a virtual framebuffer... */
+void init_vfb(unsigned int vfb_index, unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
+    virt_fb *vfb = &vfb_array[vfb_index];
+    vfb->x = x;
+    vfb->y = y;
+    vfb->width = width;
+    vfb->height = height;
+    vfb->pitch = width * sizeof(unsigned int);
+    vfb->data = (unsigned char *) malloc(vfb->pitch * height);
+}
+
+/* Plot pixel to a virtual framebuffer; this may later be removed... */
+void draw_to_vfb(unsigned int vfb_index, unsigned int x, unsigned int y, unsigned int color) {
+    virt_fb *vfb = &vfb_array[vfb_index];
+    unsigned int *pixel = (unsigned int *) (vfb->data + y * vfb->pitch + x * sizeof(unsigned int));
+    *pixel = color;
+}
+
+/* Only draws 8x8 PSF files... */
 void draw_text(char *text, int x, int y, char *fb_mem, int fb_width, int fb_height, char *psf_filename, int color) {
     int psf_fd = open(psf_filename, O_RDONLY);
     if (psf_fd < 0) {
@@ -212,11 +242,10 @@ void paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text
     paint_rect(pos_x, pos_y, size_x, size_y, RGB(200, 200, 200));
     paint_rect(pos_x + 2, pos_y + 2, size_x + 2, size_y + 2, RGB(255, 255, 255));
     paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 18, RGB(0, 0, 150));
-    draw_text(text, pos_x + 6, pos_y + 6, fb, _fb_info.width, _fb_info.height, "/usr/share/fonts/ter-u16n.psf", RGB(0, 0, 0));
+    draw_text(text, pos_x + 10, pos_y + 10, fb, _fb_info.width, _fb_info.height, "/usr/share/fonts/Anikki-8x8.psf", RGB(255, 255, 255));
     /* Start a new thread for the loop... */
     if(fork()) {
         while(1) {
-            sleep(1);
             draw_tga("/usr/share/bitmaps/close_up.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
             draw_tga("/usr/share/bitmaps/maximize_up.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
             draw_tga("/usr/share/bitmaps/minimize_up.tga", pos_x + size_x - 48, pos_y + 6, fb, _fb_info.width);
@@ -224,9 +253,22 @@ void paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text
             draw_tga("/usr/share/bitmaps/close_down.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
             draw_tga("/usr/share/bitmaps/maximize_down.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
             draw_tga("/usr/share/bitmaps/minimize_down.tga", pos_x + size_x - 48, pos_y + 6, fb, _fb_info.width);
+            sleep(1);
         }
     }
     else { }
+}
+
+/* Actually display virtual framebuffer contents to physical framebuffer... */
+void copy_to_physfb(uint32_t vfb_index) {
+    virt_fb *vfb = &vfb_array[vfb_index];
+    for (int y = 0; y < vfb->height; y++) {
+        for (int x = 0; x < vfb->width; x++) {
+            uint32_t *virt_pixel = (uint32_t *)(vfb->data + y * vfb->pitch + x * sizeof(uint32_t));
+            uint32_t *phys_pixel = (uint32_t *)(fb + genbufferpos(vfb->x + x, vfb->y + y));
+            *phys_pixel = *virt_pixel;
+        }
+    }
 }
 
 int main() {
@@ -256,7 +298,16 @@ int main() {
     /*
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
-    paint_window(25, 25, 400, 100, "Hello, world!");
+    // paint_window(25, 25, 400, 100, "Hello, world!");
+
+    init_vfb(0, 0, 0, 100, 100);
+    init_vfb(1, 0, 100, 100, 100);
+
+    for(int x = 0; x <= 10; x++)
+        for(int y = 0; y <= 10; y++)
+            draw_to_vfb(0, x, y, RGB(255, 255, 255));
+
+    copy_to_physfb(0);
 
     getchar();
     return EXIT_SUCCESS;

@@ -19,6 +19,9 @@
 		"escp.h": "c",
 		"unistd.h": "c",
 		"string.h": "c",
-		"errno.h": "c"
+		"errno.h": "c",
+		"array": "c",
+		"string": "c",
+		"string_view": "c"
 	}
 }
