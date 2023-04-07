@@ -48,25 +48,24 @@
 
 #define TGA_HEADER_SIZE 18
 #define TGA_DATA_OFFSET 18
+#define PSF_FONT_MAGIC 0x864AB572
 
 #define RGBA(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define RGB(r, g, b) RGBA(r, g, b, 255U)
 
-#define PSF2_MAGIC 0x864ab572
-
 struct fb_info _fb_info;
 char * fb;
 
-typedef struct {
+struct psf_header {
     unsigned int magic;
     unsigned int version;
-    unsigned int headersize;
+    unsigned int header_size;
     unsigned int flags;
     unsigned int length;
-    unsigned int charsize;
+    unsigned int char_size;
     unsigned int height;
     unsigned int width;
-} psf2_header_t;
+};
 
 /*
  *  Convert on-screen coordinates to position in framebuffer.
@@ -75,99 +74,49 @@ unsigned int genbufferpos(int x, int y) {
     return x * 4 + y * _fb_info.pitch;
 }
 
-void draw_text_psf(char* text, char* psf_file, int x, int y) {
-    int font_fd = open(psf_file, O_RDONLY);
-    if (font_fd == -1) {
-        perror("Failed to open font file");
+void draw_text(char *text, int x, int y, char *fb_mem, int fb_width, int fb_height, char *psf_filename, int color) {
+    int psf_fd = open(psf_filename, O_RDONLY);
+    if (psf_fd < 0) {
+        printf("error: could not open PSF font file...\n");
         return;
     }
 
-    // Read the PSF file header
-    psf2_header_t psf2_header;
-    int n = read(font_fd, &psf2_header, sizeof(psf2_header_t));
-    if (n == -1) {
-        perror("Failed to read PSF header");
-        close(font_fd);
+    struct psf_header psf_header;
+    read(psf_fd, &psf_header, sizeof(struct psf_header));
+
+    if (psf_header.magic != PSF_FONT_MAGIC) {
+        printf("error: invalid PSF font file...\n");
+        close(psf_fd);
         return;
     }
 
-    // Verify the PSF file magic
-    if (psf2_header.magic != PSF2_MAGIC) {
-        printf("Invalid PSF magic: 0x%x\n", psf2_header.magic);
-        close(font_fd);
-        return;
-    }
+    int char_size = psf_header.char_size;
+    char char_buffer[char_size];
 
-    // Allocate memory for the glyph bitmap
-    unsigned char* glyph_bitmap = (unsigned char*)malloc(psf2_header.charsize);
-    if (glyph_bitmap == NULL) {
-        perror("Failed to allocate memory for glyph bitmap");
-        close(font_fd);
-        return;
-    }
+    while (*text) {
+        lseek(psf_fd, psf_header.header_size + (unsigned int)(*text) * char_size, SEEK_SET);
+        read(psf_fd, char_buffer, char_size);
 
-    // Write each character to the framebuffer
-    while (*text != '\0') {
-        // Calculate the character index
-        int char_index = (int)*text;
-        if (char_index < 0 || char_index >= psf2_header.length) {
-            // Invalid character, skip it
-            text++;
-            continue;
-        }
-
-        // Seek to the glyph bitmap data
-        off_t glyph_offset = psf2_header.headersize + (char_index * psf2_header.charsize);
-        if (lseek(font_fd, glyph_offset, SEEK_SET) == -1) {
-            perror("Failed to seek to glyph bitmap data");
-            close(font_fd);
-            free(glyph_bitmap);
-            return;
-        }
-
-        // Read the glyph bitmap data
-        n = read(font_fd, glyph_bitmap, psf2_header.charsize);
-        if (n == -1) {
-            perror("Failed to read glyph bitmap data");
-            close(font_fd);
-            free(glyph_bitmap);
-            return;
-        }
-
-        // Draw the glyph bitmap at the current position in the framebuffer
-        for (int row = 0; row < psf2_header.height; row++) {
-            for (int col = 0; col < psf2_header.width; col++) {
-                // Calculate the offset
-                int offset = genbufferpos(x + col, y + row);
-                if (psf2_header.flags & 0x01) {
-                    // 32-bit font
-                    unsigned int color = glyph_bitmap[row * psf2_header.width + col];
-                    *(fb + offset) = color & 255;
-                    *(fb + offset + 1) = (color >> 8) & 255;
-                    *(fb + offset + 2) = (color >> 16) & 255;
-                } else {
-                    // 8-bit font
-                   
-                    unsigned char color = glyph_bitmap[row * psf2_header.width + col];
-                    *(fb + offset) = color & 255;
-                    *(fb + offset + 1) = (color >> 8) & 255;
-                    *(fb + offset + 2) = (color >> 16) & 255;
+        int i, j, k;
+        for (i = 0; i < psf_header.height; i++) {
+            for (j = 0; j < psf_header.width; j++) {
+                char pixel = char_buffer[i * ((psf_header.width + 7) / 8) + (j / 8)];
+                int pixel_value = (pixel >> (7 - j % 8)) & 1;
+                if (pixel_value) {
+                    unsigned int pos = genbufferpos(x + j, y + i);
+                    /* The `4` in the line below represents bytes-per-pixel. */
+                    for (k = 0; k < 4; k++) {
+                        fb_mem[pos + k] = color;
+                    }
                 }
             }
         }
 
-        // Move the current position to the right
-        x += psf2_header.width;
-
-        // Move to the next character
+        x += psf_header.width;
         text++;
     }
 
-    // Free the glyph bitmap memory
-    free(glyph_bitmap);
-
-    // Close the font file
-    close(font_fd);
+    close(psf_fd);
 }
 
 /*
@@ -259,10 +208,11 @@ void paint_panel(int pos_x, int pos_y, int size_x, int size_y) {
 /*
  *  Draw a window.
  */
-void paint_window(int pos_x, int pos_y, int size_x, int size_y) {
+void paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text) {
     paint_rect(pos_x, pos_y, size_x, size_y, RGB(200, 200, 200));
     paint_rect(pos_x + 2, pos_y + 2, size_x + 2, size_y + 2, RGB(255, 255, 255));
     paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 18, RGB(0, 0, 150));
+    draw_text(text, pos_x + 6, pos_y + 6, fb, _fb_info.width, _fb_info.height, "/usr/share/fonts/ter-u16n.psf", RGB(0, 0, 0));
     /* Start a new thread for the loop... */
     if(fork()) {
         while(1) {
@@ -306,9 +256,7 @@ int main() {
     /*
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
-    paint_window(25, 25, 400, 100);
-
-    draw_text_psf("H", "/usr/share/fonts/ter-u16n.psf", 50, 50);
+    paint_window(25, 25, 400, 100, "Hello, world!");
 
     getchar();
     return EXIT_SUCCESS;
