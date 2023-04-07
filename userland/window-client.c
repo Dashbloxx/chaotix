@@ -227,6 +227,16 @@ void paint_rect(int pos_x, int pos_y, int size_x, int size_y, int color) {
     }
 }
 
+/* Return an index of an unused virtual framebuffer if it is even found. Return `-1` if one can't be found... */
+int get_free_vfb_index() {
+    for (int i = 0; i < sizeof(vfb_array) / sizeof(virt_fb); i++) {
+        if (vfb_array[i].data == NULL) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 /*
  *  Draw a panel on screen.
  */
@@ -236,9 +246,9 @@ void paint_panel(int pos_x, int pos_y, int size_x, int size_y) {
 }
 
 /*
- *  Draw a window.
+ *  Draw a window. Return `-1` if an error occured, and return a virtual framebuffer index if the window creation was successfull!
  */
-void paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text) {
+int paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text) {
     paint_rect(pos_x, pos_y, size_x, size_y, RGB(200, 200, 200));
     paint_rect(pos_x + 2, pos_y + 2, size_x + 2, size_y + 2, RGB(255, 255, 255));
     paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 18, RGB(0, 0, 150));
@@ -257,6 +267,28 @@ void paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text
         }
     }
     else { }
+
+    /* 
+     *  Check for a virtual framebuffer index that isn't currently used, and then return if there is an error, if not, create a new
+     *  thread, and initialize the virtual framebuffer, and then loop the process of copying the virtual framebuffer to the physical
+     *  framebuffer in the new thread. Then, return the index of the new virtual framebuffer...
+     */
+    int index = get_free_vfb_index();
+    if(index == -1) {
+        return -1;
+    }
+    /*if(fork()) {
+        init_vfb(index, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
+        for(;;) {
+            copy_to_physfb(index);
+        }
+    }
+    else { }*/
+    init_vfb(index, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
+    for(;;) {
+        copy_to_physfb(index);
+    }
+    return index;
 }
 
 /* Actually display virtual framebuffer contents to physical framebuffer... */
@@ -314,22 +346,14 @@ int main() {
     /*
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
-    // paint_window(25, 25, 400, 100, "Hello, world!");
+    int virtual_framebuffer_index = paint_window(25, 25, 400, 100, "Hello, world!");
 
-    init_vfb(0, 0, 0, 100, 100);
-    init_vfb(1, 0, 100, 100, 100);
-
-    for(int x = 0; x <= 10; x++)
-        for(int y = 0; y <= 10; y++)
-            draw_to_vfb(0, x, y, RGB(255, 255, 255));
-
-    translate_vfb(0, 50, 50, 200, 200);
-
-    for(int x = 0; x <= 10; x++)
-        for(int y = 0; y <= 10; y++)
-            draw_to_vfb(0, x, y, RGB(255, 255, 255));
-            
-    copy_to_physfb(0);
+    for(int x = 25 + 10; x <= 100; x++) {
+        for(int y = 25 + 10; y <= 100; y++) {
+            draw_to_vfb(virtual_framebuffer_index, x, y, RGB(255, 255, 255));
+        }
+    }
+    copy_to_physfb(virtual_framebuffer_index);
 
     getchar();
     return EXIT_SUCCESS;
