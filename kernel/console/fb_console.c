@@ -54,14 +54,23 @@
 #include <kernel/ring_buf.h>
 #include <kernel/scheduler.h>
 
+/*
+ *  The kernel has it's own way of displaying the console/terminal. It uses the framebuffer to draw it, instead of using VGA
+ *  text mode...
+ */
+
 #define TAB_STOP 8
 
 #define DEFAULT_FG_COLOR 7
 #define DEFAULT_BG_COLOR 0
 
+/*
+ *  This array contains colors that are to be used in the framebuffer terminal. The first color is the default color on text
+ *  that is displayed. The 8th color represents the default background of the framebuffer terminal...
+ */
 static const uint32_t palette[] = {
     0x000000, 0xcc0000, 0x4e9a06, 0xc4a000, 0x3465a4, 0x75507b,
-    0xff7300, 0xffffff, 0x555753, 0xef2929, 0x8ae234, 0xfce94f,
+    0xff7300, 0xFFFFFF, 0x555753, 0xef2929, 0x8ae234, 0xfce94f,
     0x729fcf, 0xad7fa8, 0x34e2e2, 0xeeeeec,
 };
 
@@ -142,9 +151,7 @@ static void flush_cell_at(size_t x, size_t y, struct cell* cell) {
         uint32_t* pixel = (uint32_t*)row_addr;
         for (size_t px = 0; px < font->glyph_width; ++px) {
             uint32_t val = *(const uint32_t*)glyph;
-            uint32_t swapped = ((val >> 24) & 0xff) | ((val << 8) & 0xff0000) |
-                               ((val >> 8) & 0xff00) |
-                               ((val << 24) & 0xff000000);
+            uint32_t swapped = ((val >> 24) & 0xff) | ((val << 8) & 0xff0000) | ((val >> 8) & 0xff00) | ((val << 24) & 0xff000000);
             *pixel++ = swapped & (1 << (32 - px - 1)) ? fg : bg;
         }
         glyph += font->bytes_per_glyph / font->glyph_height;
@@ -154,8 +161,7 @@ static void flush_cell_at(size_t x, size_t y, struct cell* cell) {
 
 static void flush(void) {
     if (whole_screen_should_be_cleared) {
-        memset32((uint32_t*)fb_addr, palette[bg_color],
-                 fb_info.pitch * fb_info.height / sizeof(uint32_t));
+        memset32((uint32_t*)fb_addr, palette[bg_color], fb_info.pitch * fb_info.height / sizeof(uint32_t));
         whole_screen_should_be_cleared = false;
     }
 

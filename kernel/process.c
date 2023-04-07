@@ -44,7 +44,9 @@
 #include <common/string.h>
 #include <stdatomic.h>
 
+/* The kernel's process! */
 struct process* current;
+/* Contains the initial values of the FPU registers... */
 struct fpu_state initial_fpu_state;
 static atomic_int next_pid = 1;
 
@@ -54,8 +56,15 @@ extern unsigned char kernel_page_directory[];
 extern unsigned char stack_top[];
 
 void process_init(void) {
+    /*
+     *  Initialize the x87 FPU (Floating Point Unit). According to ChatGPT, when the `fninit` instruction is called, it resets
+     *  the FPU registers to their default values...
+     *  After that, load the values of the FPU registers to a struct named `initial_fpu_state`. Makes sense right?
+     */
+    #if defined(__i386__)
     __asm__ volatile("fninit");
     __asm__ volatile("fxsave %0" : "=m"(initial_fpu_state));
+    #endif
 
     current = kaligned_alloc(alignof(struct process), sizeof(struct process));
     ASSERT(current);
@@ -77,8 +86,7 @@ void process_init(void) {
     gdt_set_kernel_stack(current->stack_top);
 }
 
-struct process* process_create_kernel_process(const char* comm,
-                                              void (*entry_point)(void)) {
+struct process* process_create_kernel_process(const char* comm, void (*entry_point)(void)) {
     struct process* process =
         kaligned_alloc(alignof(struct process), sizeof(struct process));
     if (!process)

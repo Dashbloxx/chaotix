@@ -104,8 +104,7 @@ struct inode* inode_lookup_child(struct inode* inode, const char* name) {
     return inode->fops->lookup_child(inode, name);
 }
 
-struct inode* inode_create_child(struct inode* inode, const char* name,
-                                 mode_t mode) {
+struct inode* inode_create_child(struct inode* inode, const char* name, mode_t mode) {
     if (!inode->fops->create_child || !S_ISDIR(inode->mode)) {
         inode_unref(inode);
         return ERR_PTR(-ENOTDIR);
