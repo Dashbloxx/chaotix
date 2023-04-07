@@ -37,7 +37,6 @@
 #include <stddef.h>
 
 #if defined(__i386__)
-
 typedef struct gdt_descriptor {
     uint16_t limit_lo : 16;
     uint16_t base_lo : 16;
@@ -50,7 +49,11 @@ typedef struct gdt_descriptor {
 
 typedef struct gdt_pointer {
     uint16_t limit;
+    #if defined(__x86_64__)
+    uint64_t base;
+    #elif defined(__i386__) && !defined(__x86_64__)
     uint32_t base;
+    #endif
 } __attribute__((packed)) gdt_pointer;
 
 struct tss {
@@ -68,8 +71,11 @@ static gdt_descriptor gdt[NUM_GDT_ENTRIES];
 static struct tss tss;
 static gdt_pointer gdtr;
 
-static void gdt_set_gate(size_t idx, uint32_t base, uint32_t limit,
-                         uint8_t access, uint8_t flags) {
+#if defined(__x86_64__)
+static void gdt_set_gate(size_t idx, uint64_t base, uint32_t limit, uint8_t access, uint8_t flags) {
+#elif defined(__i386__) && !defined(__x86_64__)
+static void gdt_set_gate(size_t idx, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
+#endif
     gdt_descriptor* entry = gdt + idx;
 
     entry->base_lo = base & 0xffff;
@@ -115,5 +121,4 @@ void gdt_init(void) {
 }
 
 void gdt_set_kernel_stack(uintptr_t stack_top) { tss.esp0 = stack_top; }
-
 #endif
