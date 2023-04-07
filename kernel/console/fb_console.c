@@ -471,7 +471,7 @@ static ring_buf input_buf;
 static mutex lock;
 
 void fb_console_init(void) {
-    font = load_psf("/usr/share/fonts/ter-u16n.psf");
+    font = load_psf("/usr/share/fonts/zap-vga16.psf");
     ASSERT_OK(font);
 
     file_description* desc = vfs_open("/dev/fb0", O_RDWR, 0);
