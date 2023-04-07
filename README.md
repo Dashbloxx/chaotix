@@ -36,4 +36,4 @@ Magma supports multiboot, so you can also combine magma's kernel & initrd with a
 
 The Magma operating system is licensed under the **MIT License**.
 
-See [LICENSE](LICENSE) to view the license. Also, take note that all files contain the license & copyright notice, unless if they are licensed under a license different from the MIT license. Fonts found here are also not licensed under the MIT license, therefore they have different license rules...
+See [LICENSE](LICENSE) to view the license. Also, take note that all files contain the license & copyright notice, unless if they are licensed under a license different from the MIT license. All fonts inside `base/usr/share/fonts` are **NOT** subject to Magma's copyright, and they are under a different license.
