@@ -49,6 +49,13 @@
 #define TGA_HEADER_SIZE 18
 #define TGA_DATA_OFFSET 18
 #define PSF_FONT_MAGIC 0x864AB572
+#define VFB_ARRAY_SIZE 256
+
+/*
+ *  We can only have multiple processes running at the same time for now, not multiple threads. Therefore, we have to implement a simple
+ *  mechanism for multithreading...
+ */
+#define THREADS 2
 
 #define RGBA(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define RGB(r, g, b) RGBA(r, g, b, 255U)
@@ -65,7 +72,7 @@ typedef struct {
 
 struct fb_info _fb_info;
 char * fb;
-virt_fb vfb_array[256];
+virt_fb vfb_array[VFB_ARRAY_SIZE];
 
 struct psf_header {
     unsigned int magic;
@@ -254,7 +261,7 @@ int paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text)
     paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 18, RGB(0, 0, 150));
     draw_text(text, pos_x + 10, pos_y + 10, fb, _fb_info.width, _fb_info.height, "/usr/share/fonts/Anikki-8x8.psf", RGB(255, 255, 255));
     /* Start a new thread for the loop... */
-    if(fork()) {
+    /*if(fork()) {
         while(1) {
             draw_tga("/usr/share/bitmaps/close_up.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
             draw_tga("/usr/share/bitmaps/maximize_up.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
@@ -266,7 +273,11 @@ int paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text)
             sleep(1);
         }
     }
-    else { }
+    else { }*/
+
+    draw_tga("/usr/share/bitmaps/close_up.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
+    draw_tga("/usr/share/bitmaps/maximize_up.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
+    draw_tga("/usr/share/bitmaps/minimize_up.tga", pos_x + size_x - 48, pos_y + 6, fb, _fb_info.width);
 
     /* 
      *  Check for a virtual framebuffer index that isn't currently used, and then return if there is an error, if not, create a new
@@ -277,17 +288,12 @@ int paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text)
     if(index == -1) {
         return -1;
     }
-    /*if(fork()) {
-        init_vfb(index, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
-        for(;;) {
-            copy_to_physfb(index);
-        }
-    }
-    else { }*/
+
     init_vfb(index, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
-    for(;;) {
+    //init_vfb(0, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
+    /*for(;;) {
         copy_to_physfb(index);
-    }
+    }*/
     return index;
 }
 
@@ -348,8 +354,8 @@ int main() {
      */
     int virtual_framebuffer_index = paint_window(25, 25, 400, 100, "Hello, world!");
 
-    for(int x = 25 + 10; x <= 100; x++) {
-        for(int y = 25 + 10; y <= 100; y++) {
+    for(int x = 0; x <= 10; x++) {
+        for(int y = 0; y <= 10; y++) {
             draw_to_vfb(virtual_framebuffer_index, x, y, RGB(255, 255, 255));
         }
     }
