@@ -54,6 +54,10 @@ typedef struct {
 /* Let's define `FILE` the right way. If we want it capitalized, let's use a macro to do it! */
 #define FILE file_t
 
+extern FILE *stdin;
+extern FILE *stdout;
+extern FILE *stderr;
+
 int putchar(int ch);
 int puts(const char* str);
 int printf(const char* format, ...);

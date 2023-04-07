@@ -16,6 +16,9 @@
 		"fcntl.h": "c",
 		"stdio.h": "c",
 		"stdlib.h": "c",
-		"escp.h": "c"
+		"escp.h": "c",
+		"unistd.h": "c",
+		"string.h": "c",
+		"errno.h": "c"
 	}
 }

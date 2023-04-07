@@ -38,6 +38,11 @@
 #include "string.h"
 #include "unistd.h"
 #include "fcntl.h"
+#include "stdlib.h"
+
+FILE *stdin = &(FILE) { .fd = 0 };
+FILE *stdout = &(FILE) { .fd = 1 };
+FILE *stderr = &(FILE) { .fd = 2 };
 
 int putchar(int ch) {
     char c = ch;

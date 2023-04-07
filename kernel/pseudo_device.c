@@ -55,15 +55,13 @@ static ssize_t read_zeros(file_description* desc, void* buffer, size_t count) {
     return count;
 }
 
-static ssize_t write_to_bit_bucket(file_description* desc, const void* buffer,
-                                   size_t count) {
+static ssize_t write_to_bit_bucket(file_description* desc, const void* buffer, size_t count) {
     (void)desc;
     (void)buffer;
     return count;
 }
 
-static ssize_t write_to_full_disk(file_description* desc, const void* buffer,
-                                  size_t count) {
+static ssize_t write_to_full_disk(file_description* desc, const void* buffer, size_t count) {
     (void)desc;
     (void)buffer;
     if (count > 0)

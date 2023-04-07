@@ -56,5 +56,4 @@ typedef struct unix_socket {
 unix_socket* unix_socket_create(void);
 void unix_socket_set_backlog(unix_socket*, int backlog);
 NODISCARD unix_socket* unix_socket_accept(unix_socket* listener);
-NODISCARD int unix_socket_connect(file_description* connector_fd,
-                                  unix_socket* listener);
+NODISCARD int unix_socket_connect(file_description* connector_fd, unix_socket* listener);
