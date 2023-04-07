@@ -13,8 +13,7 @@ BIN_TARGET_NAMES := \
 	cal \
 	cat \
 	clear \
-	window-client \
-	window-server \
+	window \
 	cp \
 	date \
 	echo \
