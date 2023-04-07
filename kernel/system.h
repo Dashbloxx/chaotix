@@ -49,12 +49,22 @@
  *  defines a seperate struct also named `registers`, that should represent the other architecture's registers.
  */
 #if defined(__i386__)
+/* Add more macros to create `registers` struct for either i?86, or AMD64/x86_64... */
+#if defined(__i386__) && !defined(__x86_64__) 
 typedef struct registers {
     uint32_t ss, gs, fs, es, ds;
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
     uint32_t num, err_code;
     uint32_t eip, cs, eflags, user_esp, user_ss;
 } __attribute__((packed)) registers;
+#elif defined(__x86_64__)
+typedef struct registers {
+    uint64_t r15, r14, r13, r12, r11, r10, r9, r8;
+    uint64_t rdi, rsi, rbp, rsp, rbx, rdx, rcx, rax;
+    uint64_t int_num, err_code;
+    uint64_t rip, cs, rflags, user_rsp, user_ss;
+} __attribute__((packed)) registers;
+#endif
 
 void dump_registers(const registers*);
 
