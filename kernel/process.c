@@ -87,8 +87,7 @@ void process_init(void) {
 }
 
 struct process* process_create_kernel_process(const char* comm, void (*entry_point)(void)) {
-    struct process* process =
-        kaligned_alloc(alignof(struct process), sizeof(struct process));
+    struct process* process = kaligned_alloc(alignof(struct process), sizeof(struct process));
     if (!process)
         return ERR_PTR(-ENOMEM);
     *process = (struct process){0};
@@ -120,8 +119,7 @@ struct process* process_create_kernel_process(const char* comm, void (*entry_poi
     return process;
 }
 
-pid_t process_spawn_kernel_process(const char* comm,
-                                   void (*entry_point)(void)) {
+pid_t process_spawn_kernel_process(const char* comm, void (*entry_point)(void)) {
     struct process* process = process_create_kernel_process(comm, entry_point);
     if (IS_ERR(process))
         return PTR_ERR(process);
@@ -193,15 +191,13 @@ noreturn void process_exit(int status) {
 }
 
 noreturn void process_crash_in_userland(int signum) {
-    kprintf("\x1b[31mProcess %d crashed with signal %d\x1b[m\n", current->pid,
-            signum);
+    kprintf("\x1b[31mProcess %d crashed with signal %d\x1b[m\n", current->pid, signum);
     current->exit_status = signum & 0xff;
     die();
 }
 
 static void terminate_with_signal(int signum) {
-    kprintf("\x1b[31mProcess %d was terminated with signal %d\x1b[m\n",
-            current->pid, signum);
+    kprintf("\x1b[31mProcess %d was terminated with signal %d\x1b[m\n", current->pid, signum);
     current->exit_status = signum & 0xff;
     current->state = PROCESS_STATE_DYING;
 }
