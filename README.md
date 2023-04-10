@@ -1,5 +1,4 @@
-# Chaotix
-_Formerly known as Psychix, or Magma..._
+# Chaotix _Formerly known as Psychix, or Magma..._
 ## About
 Magma (formerly known as Psychix) is a UNIX-like operating system written in C that uses code from [Xv6](https://github.com/mit-pdos/xv6-public) and [Yagura](https://github.com/mosmeh/yagura).
 ## Supported architectures
