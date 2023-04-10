@@ -1,14 +1,18 @@
 /*
- *    __  __                      
- *   |  \/  |__ _ __ _ _ __  __ _ 
- *   | |\/| / _` / _` | '  \/ _` |
- *   |_|  |_\__,_\__, |_|_|_\__,_|
- *               |___/        
+ *  .OOOOOO.   OOOO                                .    O8O              
+ *  D8P'  `Y8B  `888                              .O8    `"'              
+ * 888           888 .OO.    .OOOO.    .OOOOO.  .O888OO OOOO  OOOO    OOO 
+ * 888           888P"Y88B  `P  )88B  D88' `88B   888   `888   `88B..8P'  
+ * 888           888   888   .OP"888  888   888   888    888     Y888'    
+ * `88B    OOO   888   888  D8(  888  888   888   888 .  888   .O8"'88B   
+ *  `Y8BOOD8P'  O888O O888O `Y888""8O `Y8BOD8P'   "888" O888O O88'   888O 
  * 
- *  Magma is a UNIX-like operating system that consists of a kernel written in C and
+ *  Chaotix is a UNIX-like operating system that consists of a kernel written in C and
  *  i?86 assembly, and userland binaries written in C.
  *     
- *  Copyright (c) 2023 Nexuss, John Paul Wohlscheid, rilysh, Milton612, and FueledByCocaine
+ *  Copyright (c) 2023 Nexuss
+ *  Copyright (c) 2022 mosm
+ *  Copyright (c) 2006-2018 Frans Kaashoek, Robert Morris, Russ Cox, Massachusetts Institute of Technology
  * 
  *  This file may or may not contain code from https://github.com/mosmeh/yagura, and/or
  *  https://github.com/mit-pdos/xv6-public. Both projects have the same license as this

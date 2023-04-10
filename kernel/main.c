@@ -1,15 +1,19 @@
 /*
- *    __  __                      
- *   |  \/  |__ _ __ _ _ __  __ _ 
- *   | |\/| / _` / _` | '  \/ _` |
- *   |_|  |_\__,_\__, |_|_|_\__,_|
- *               |___/        
+ *  .OOOOOO.   OOOO                                .    O8O              
+ *  D8P'  `Y8B  `888                              .O8    `"'              
+ * 888           888 .OO.    .OOOO.    .OOOOO.  .O888OO OOOO  OOOO    OOO 
+ * 888           888P"Y88B  `P  )88B  D88' `88B   888   `888   `88B..8P'  
+ * 888           888   888   .OP"888  888   888   888    888     Y888'    
+ * `88B    OOO   888   888  D8(  888  888   888   888 .  888   .O8"'88B   
+ *  `Y8BOOD8P'  O888O O888O `Y888""8O `Y8BOD8P'   "888" O888O O88'   888O 
  * 
- *  Magma is a UNIX-like operating system that consists of a kernel written in C and
+ *  Chaotix is a UNIX-like operating system that consists of a kernel written in C and
  *  i?86 assembly, and userland binaries written in C.
  *     
- *  Copyright (c) 2023 Nexuss, John Paul Wohlscheid, rilysh, Milton612, and FueledByCocaine
- * 
+ *  Copyright (c) 2023 Nexuss
+ *  Copyright (c) 2022 mosm
+ *  Copyright (c) 2006-2018 Frans Kaashoek, Robert Morris, Russ Cox, Massachusetts Institute of Technology
+ *
  *  This file may or may not contain code from https://github.com/mosmeh/yagura, and/or
  *  https://github.com/mit-pdos/xv6-public. Both projects have the same license as this
  *  project, and the license can be seen below:
@@ -87,8 +91,8 @@ static void create_char_device(const char* pathname, struct inode* device) {
  */
 void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     /*
-     *  We are only using cross-compilers to build the Magma operating system. If we use a x86-compatible cross-compiler, it will by default build us Magma for
-     *  the architecture that the cross-compiler compiles for. For now though, i?86 is supported, meaning that the i686-elf cross-toolchain works for building Magma.
+     *  We are only using cross-compilers to build the Chaotix operating system. If we use a x86-compatible cross-compiler, it will by default build us Chaotix for
+     *  the architecture that the cross-compiler compiles for. For now though, i?86 is supported, meaning that the i686-elf cross-toolchain works for building Chaotix.
      *  When i?86 is stated, we mean i386, i486, i586, i686, or i786.
      *  Anyways, here, we run some i?86-specific stuff...
      */

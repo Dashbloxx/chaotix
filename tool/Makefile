@@ -5,7 +5,7 @@
 #  |_|  |_\__,_\__, |_|_|_\__,_|
 #              |___/        
 #
-# Magma is a UNIX-like operating system that consists of a kernel written in C and
+# Chaotix is a UNIX-like operating system that consists of a kernel written in C and
 # i?86 assembly, and userland binaries written in C.
 #    
 # Copyright (c) 2023 Nexuss, John Paul Wohlscheid, rilysh, Milton612, and FueledByCocaine

@@ -22,6 +22,7 @@
 		"errno.h": "c",
 		"array": "c",
 		"string": "c",
-		"string_view": "c"
+		"string_view": "c",
+		"sound.h": "c"
 	}
 }

@@ -1,6 +1,6 @@
 # Chapter 1
 ## Booting up
-The bootloader loads the kernel, and passes some useful information that the kernel can't get on its own (the bootloader has to get it). The kernel uses the multiboot protocol to get the information from the bootloader. There are several bootloaders that support multiboot, like the (GRUB)[https://www.gnu.org/software/grub/] bootloader, (limine)[https://limine-bootloader.org/] bootloader, and several other bootloaders. The two bootloaders I just provided work with multiboot, therefore they should cooperate with Magma's kernel.
+The bootloader loads the kernel, and passes some useful information that the kernel can't get on its own (the bootloader has to get it). The kernel uses the multiboot protocol to get the information from the bootloader. There are several bootloaders that support multiboot, like the (GRUB)[https://www.gnu.org/software/grub/] bootloader, (limine)[https://limine-bootloader.org/] bootloader, and several other bootloaders. The two bootloaders I just provided work with multiboot, therefore they should cooperate with Chaotix's kernel.
 Now, the bootloader jumps to the code in `boot.S`, an assembly file that obtains multiboot and then passes it to the `start` function in `main.c`. The `start` function then does it's thing:
 1. Enables GDT (Global Descriptor Table), a i?86/AMD64-specific thing.
 2. Enables IDT (Interrupt Descriptor Table), which is also a i?86/AMD64-specific thing.
