@@ -48,6 +48,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <escp.h>
 
 #define QOI_OP_INDEX 0x00
 #define QOI_OP_DIFF 0x40
@@ -85,7 +86,7 @@ static uint32_t swap_bytes(uint32_t x) {
 
 int main(int argc, char* const argv[]) {
     if (argc != 2) {
-        dprintf(STDERR_FILENO, "Usage: imgview FILE\n");
+        dprintf(STDERR_FILENO, "%susage: %simgview %s<%sfile%s>%s\n", F_MAGENTA, F_GREEN, F_BLUE, F_GREEN, F_BLUE, RESET);
         return EXIT_FAILURE;
     }
 

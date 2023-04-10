@@ -89,7 +89,13 @@ static void create_char_device(const char* pathname, struct inode* device) {
  *  This function is called from assembly. Notice that this function also contains two arguments. These arguments are related to multiboot. Multiboot allows bootloaders
  *  to collect data (which the kernel can't collect), and then pass it to the kernel when jumping to it.
  */
+#if defined(__aarch64__) && defined(__RPi__)
+void start(uint64_t dtb_ptr32, uint64_t x1, uint64_t x2, uint64_t x3) {
+#elif defined(__aarch32__) && defined(__RPi__)
+void start(uint32_t r0, uint32_t r1, uint32_t atags) {
+#elif defined(__i386__)
 void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
+#endif
     /*
      *  We are only using cross-compilers to build the Chaotix operating system. If we use a x86-compatible cross-compiler, it will by default build us Chaotix for
      *  the architecture that the cross-compiler compiles for. For now though, i?86 is supported, meaning that the i686-elf cross-toolchain works for building Chaotix.
