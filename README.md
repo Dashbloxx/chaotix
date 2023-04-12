@@ -9,7 +9,7 @@ Chaotix (formerly known as Psychix or Magma) is a UNIX-like operating system wri
 - [ ] [`ARM`](https://en.wikipedia.org/wiki/ARM_architecture_family)
 - [ ] [`RISC-V`](https://riscv.org/)
 - [ ] [`PowerPC`](https://en.wikipedia.org/wiki/PowerPC)
-- [ ] [`68K`](https://en.wikipedia.org/wiki/Motorola_68000_series) 9a4392269372f9ac61912fa47c715fae9a91ddea
+- [ ] [`68K`](https://en.wikipedia.org/wiki/Motorola_68000_series)
 
 Although chaotix cannot switch to [long mode](https://wiki.osdev.org/Setting_Up_Long_Mode) (64-bit mode) on an `amd64` machine, it can still run in protected mode like it usually does.
 ## Building
