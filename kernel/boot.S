@@ -147,6 +147,134 @@ read_eip:
   .skip STACK_SIZE
   .globl stack_top
 stack_top:
+#elif defined(__x86_64__)
+#include "boot_defs.h"
+#define ASM_FILE
+#include "multiboot.h"
+
+#define FLAGS (MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_VIDEO_MODE)
+#define CHECKSUM -(MULTIBOOT_HEADER_MAGIC + FLAGS)
+
+  .section .multiboot, "a"
+  .align MULTIBOOT_HEADER_ALIGN
+  .long MULTIBOOT_HEADER_MAGIC
+  .long FLAGS
+  .long CHECKSUM
+
+  // MULTIBOOT_AOUT_KLUDGE
+  .long 0 // header_addr
+  .long 0 // load_addr
+  .long 0 // load_end_addr
+  .long 0 // bss_end_addr
+  .long 0 // entry_addr
+
+  // MULTIBOOT_VIDEO_MODE
+  .long 0  // mode_type
+  .long 0  // width
+  .long 0  // height
+  .long 32 // depth
+
+  .section .init_text, "a"
+  .globl _start
+_start:
+  cli
+
+  # fill page table
+  movl $0x103, %esi # P | RW | G
+  movl $kernel_page_table, %edi
+  movl $1022, %ecx # last two pages are for quickmap
+1:
+  movl %esi, (%edi)
+  addl $PAGE_SIZE, %esi
+  addl $4, %edi
+  loop 1b
+
+  movl $kernel_page_table, %edx
+  orl $3, %edx # P | RW
+  movl %edx, kernel_page_directory # identity mapping
+  movl %edx, kernel_page_directory + KERNEL_PDE_IDX * 4
+
+  # recursive
+  movl $kernel_page_directory, %edx
+  orl $3, %edx # P | RW
+  movl %edx, kernel_page_directory + 1023 * 4
+
+  # setup page tables for long mode
+  movl $kernel_page_directory, %eax
+  movl %eax, %cr3
+
+  movl %cr4, %eax
+  orl $(1 << 5), %eax   # Enable PAE
+  orl $(1 << 8), %eax   # Enable global pages
+  movl %eax, %cr4
+
+  movl %cr0, %eax
+  orl $(1 << 31), %eax  # Enable paging
+  movl %eax, %cr0
+
+  # enter long mode
+  movl $0xC0000080, %ecx
+  rdmsr
+  orl $(1 << 8), %eax   # Enable long mode
+  wrmsr
+
+  # set up long mode entry point
+  movl $start_longmode, %eax
+  movl %eax, 8(%esp)
+
+  # jump to long mode entry point
+  ljmp $0x8, $start_longmode
+
+start_longmode:
+  # clear segment registers
+  xorl %eax, %eax
+  movl %eax, %ds
+  movl %eax, %es
+  movl %eax, %fs
+  movl %eax, %gs
+
+  # set up kernel stack
+  movl $stack_top, %esp
+
+  # set up kernel data segment
+  movl $kernel_ds, %eax
+  movl %eax, %ds
+  movl %eax, %es
+  movl %eax, %fs
+  movl %eax, %gs
+
+  # clear BSS
+  cld
+  movl $0, %edi
+  movl $end, %ecx
+  subl $end, %edi
+  xorl %eax, %eax
+  rep stosb
+
+  # call main function
+  call main
+
+  # halt
+  cli
+loop_forever:
+  hlt
+  jmp loop_forever
+
+  # read EIP function
+  .globl read_eip
+read_eip:
+  popl %eax
+  jmp *%eax
+
+  # stack section
+  .section .stack, "aw", @nobits
+  .skip STACK_SIZE
+  .globl stack_top
+stack_top:
+
+  # data section
+  .section .data
+end:
 
 #elif defined(__aarch64__) && defined(__RPi__)
 // AArch64 mode
