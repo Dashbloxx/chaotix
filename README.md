@@ -1,5 +1,5 @@
 # Chaotix
-[![Build Status](https://img.shields.io/github/workflow/status/Dashbloxx/chaotix/Build%20and%20Test)](https://github.com/Dashbloxx/chaotix/actions/workflows/build-and-test.yml)
+[![Build Status](https://img.shields.io/github/workflow/status/Dashbloxx/chaotix/Build%20and%20Test)](https://github.com/Dashbloxx/chaotix/.github/workflows/ci.yml)
 [![Contributions in the Last Month](https://img.shields.io/github/commit-activity/m/Dashbloxx/chaotix)](https://github.com/Dashbloxx/chaotix/commits/main)
 [![Contributors](https://img.shields.io/github/contributors/Dashbloxx/chaotix)](https://github.com/Dashbloxx/chaotix/graphs/contributors)
 ## About
