@@ -47,6 +47,7 @@
 #include "scheduler.h"
 #include <common/string.h>
 #include <stdatomic.h>
+#include <common/escp.h>
 
 /* The kernel's process! */
 struct process* current;
@@ -77,8 +78,7 @@ void process_init(void) {
     current->fpu_state = initial_fpu_state;
     current->state = PROCESS_STATE_RUNNING;
     strlcpy(current->comm, "kernel_init", sizeof(current->comm));
-    current->pd =
-        (page_directory*)((uintptr_t)kernel_page_directory + KERNEL_VADDR);
+    current->pd = (page_directory*)((uintptr_t)kernel_page_directory + KERNEL_VADDR);
     current->stack_top = (uintptr_t)stack_top;
 
     current->cwd_path = kstrdup(ROOT_DIR);
@@ -189,19 +189,19 @@ void process_die_if_needed(void) {
 
 noreturn void process_exit(int status) {
     if (status != 0)
-        kprintf("\x1b[31mProcess %d exited with status %d\x1b[m\n", current->pid, status);
+        kprintf("%sProcess %d exited with status %d%s", F_RED, current->pid, status, RESET);
     current->exit_status = (status & 0xff) << 8;
     die();
 }
 
 noreturn void process_crash_in_userland(int signum) {
-    kprintf("\x1b[31mProcess %d crashed with signal %d\x1b[m\n", current->pid, signum);
+    kprintf("%sProcess %d crashed with signal %d%s\n", F_RED, current->pid, signum, RESET);
     current->exit_status = signum & 0xff;
     die();
 }
 
 static void terminate_with_signal(int signum) {
-    kprintf("\x1b[31mProcess %d was terminated with signal %d\x1b[m\n", current->pid, signum);
+    kprintf("%sProcess %d was terminated with signal %d%s\n", F_RED, current->pid, signum, RESET);
     current->exit_status = signum & 0xff;
     current->state = PROCESS_STATE_DYING;
 }

@@ -71,11 +71,9 @@ static int procfs_item_close(file_description* desc) {
     return 0;
 }
 
-static ssize_t procfs_item_read(file_description* desc, void* buffer,
-                                size_t count) {
+static ssize_t procfs_item_read(file_description* desc, void* buffer, size_t count) {
     mutex_lock(&desc->offset_lock);
-    ssize_t nread =
-        growable_buf_pread(desc->private_data, buffer, count, desc->offset);
+    ssize_t nread = growable_buf_pread(desc->private_data, buffer, count, desc->offset);
     if (IS_OK(nread))
         desc->offset += nread;
     mutex_unlock(&desc->offset_lock);
@@ -100,8 +98,7 @@ struct inode* procfs_dir_lookup_child(struct inode* inode, const char* name) {
     return child;
 }
 
-int procfs_dir_getdents(struct getdents_ctx* ctx, file_description* desc,
-                        getdents_callback_fn callback) {
+int procfs_dir_getdents(struct getdents_ctx* ctx, file_description* desc, getdents_callback_fn callback) {
     procfs_dir_inode* node = (procfs_dir_inode*)desc->inode;
     mutex_lock(&desc->offset_lock);
     int rc = dentry_getdents(ctx, desc, node->children, callback);

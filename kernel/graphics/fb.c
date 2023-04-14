@@ -46,6 +46,8 @@ struct inode* bochs_fb_device_create(void);
 bool multiboot_fb_init(const multiboot_info_t* mb_info);
 struct inode* multiboot_fb_device_create(void);
 
+/* Soon a function named `limine_fb_init` will be created, which will use limine for a framebuffer... */
+
 static bool bochs_is_available = false;
 static bool multiboot_is_available = false;
 

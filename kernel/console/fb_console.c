@@ -60,7 +60,8 @@
 
 /*
  *  The kernel has it's own way of displaying the console/terminal. It uses the framebuffer to draw it, instead of using VGA
- *  text mode...
+ *  text mode. Soon there may be an option for the kernel to ask the bootloader for a terminal environment if needed. For example,
+ *  the limine bootloader allows for this. 
  */
 
 #define TAB_STOP 8

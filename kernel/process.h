@@ -82,14 +82,21 @@ struct process {
     struct process* next_in_ready_queue;
 };
 
+struct thread {
+    uint32_t thread_id;
+    uint32_t eip, esp, ebp, ebx, esi, edi;
+    struct thread *next_thread;
+};
+
+typedef struct thread thread;
+
 extern struct process* current;
 extern struct process* all_processes;
 extern struct fpu_state initial_fpu_state;
 
 void process_init(void);
 
-struct process* process_create_kernel_process(const char* comm,
-                                              void (*entry_point)(void));
+struct process* process_create_kernel_process(const char* comm, void (*entry_point)(void));
 pid_t process_spawn_kernel_process(const char* comm, void (*entry_point)(void));
 
 pid_t process_generate_next_pid(void);
