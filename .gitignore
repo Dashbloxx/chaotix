@@ -11,3 +11,4 @@ compile_flags.txt
 *.iso
 **/*.iso
 /.i686-elf
+/.limine
