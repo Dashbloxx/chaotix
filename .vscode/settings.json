@@ -25,6 +25,7 @@
 		"string_view": "c",
 		"sound.h": "c",
 		"process.h": "c",
-		"interrupts.h": "c"
+		"interrupts.h": "c",
+		"*.in": "c"
 	}
 }
