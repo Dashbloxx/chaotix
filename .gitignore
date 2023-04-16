@@ -12,3 +12,5 @@ compile_flags.txt
 **/*.iso
 /.i686-elf
 /.limine
+/tools/config2macro
+/tools/configure
