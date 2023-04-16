@@ -82,14 +82,6 @@ struct process {
     struct process* next_in_ready_queue;
 };
 
-struct thread {
-    uint32_t thread_id;
-    uint32_t eip, esp, ebp, ebx, esi, edi;
-    struct thread *next_thread;
-};
-
-typedef struct thread thread;
-
 extern struct process* current;
 extern struct process* all_processes;
 extern struct fpu_state initial_fpu_state;

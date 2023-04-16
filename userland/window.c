@@ -257,47 +257,46 @@ void paint_panel(int pos_x, int pos_y, int size_x, int size_y) {
 }
 
 /*
- *  Draw a window. Return `-1` if an error occured, and return a virtual framebuffer index if the window creation was successfull!
+ *  Draw a window. Make sure to provide it a virtual framebuffer index, it's position, size, and title...
  */
-int paint_window(int pos_x, int pos_y, int size_x, int size_y, const char *text) {
+int paint_window(int index, int pos_x, int pos_y, int size_x, int size_y, const char *text) {
+    int last_pos_x = -1;
+    int last_pos_y = -1;
+    int last_size_x = -1;
+    int last_size_y = -1;
+    
+    if(pos_x == last_pos_x && pos_y == last_pos_y && size_x == last_size_x && size_y == last_size_y) {
+        /* Position or size hasn't changed, therefore let's just draw the virtual framebuffer... */
+        goto drawrest;
+    }
+    
+    last_pos_x = pos_x;
+    last_pos_y = pos_y;
+    last_size_x = size_x;
+    last_size_y = size_y;
+    
     paint_rect(pos_x, pos_y, size_x, size_y, RGB(200, 200, 200));
     paint_rect(pos_x + 2, pos_y + 2, size_x + 2, size_y + 2, RGB(255, 255, 255));
     paint_rect(pos_x + 4, pos_y + 4, size_x - 2, 18, RGB(0, 0, 150));
     draw_text(text, pos_x + 10, pos_y + 10, fb, _fb_info.width, _fb_info.height, "/usr/share/fonts/Anikki-8x8.psf", RGB(255, 255, 255));
-    /* Start a new thread for the loop... */
-    /*if(fork()) {
-        while(1) {
-            draw_tga("/usr/share/bitmaps/close_up.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
-            draw_tga("/usr/share/bitmaps/maximize_up.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
-            draw_tga("/usr/share/bitmaps/minimize_up.tga", pos_x + size_x - 48, pos_y + 6, fb, _fb_info.width);
-            sleep(1);
-            draw_tga("/usr/share/bitmaps/close_down.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
-            draw_tga("/usr/share/bitmaps/maximize_down.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
-            draw_tga("/usr/share/bitmaps/minimize_down.tga", pos_x + size_x - 48, pos_y + 6, fb, _fb_info.width);
-            sleep(1);
-        }
-    }
-    else { }*/
-
     draw_tga("/usr/share/bitmaps/close_up.tga", pos_x + size_x - 14, pos_y + 6, fb, _fb_info.width);
     draw_tga("/usr/share/bitmaps/maximize_up.tga", pos_x + size_x - 31, pos_y + 6, fb, _fb_info.width);
     draw_tga("/usr/share/bitmaps/minimize_up.tga", pos_x + size_x - 48, pos_y + 6, fb, _fb_info.width);
+
+drawrest:
 
     /* 
      *  Check for a virtual framebuffer index that isn't currently used, and then return if there is an error, if not, create a new
      *  thread, and initialize the virtual framebuffer, and then loop the process of copying the virtual framebuffer to the physical
      *  framebuffer in the new thread. Then, return the index of the new virtual framebuffer...
      */
-    int index = get_free_vfb_index();
-    if(index == -1) {
-        return -1;
-    }
+    // int index = get_free_vfb_index();
+    // if(index == -1) {
+    //     return -1;
+    // }
 
     init_vfb(index, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
-    //init_vfb(0, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
-    /*for(;;) {
-        copy_to_physfb(index);
-    }*/
+    copy_to_physfb(index);
     return index;
 }
 
@@ -356,14 +355,18 @@ int main() {
     /*
      *  Now we can actually use `fb` to draw to the framebuffer and do much more!
      */
-    int virtual_framebuffer_index = paint_window(25, 25, 400, 100, "Hello, world!");
+    int index = get_free_vfb_index();
+    if(index == -1) {
+        return -1;
+    }
+    paint_window(index, 25, 25, 400, 100, "Hello, world!");
 
     for(int x = 0; x <= 10; x++) {
         for(int y = 0; y <= 10; y++) {
-            draw_to_vfb(virtual_framebuffer_index, x, y, RGB(255, 255, 255));
+            draw_to_vfb(index, x, y, RGB(255, 255, 255));
         }
     }
-    copy_to_physfb(virtual_framebuffer_index);
+    copy_to_physfb(index);
 
     getchar();
     return EXIT_SUCCESS;

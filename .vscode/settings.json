@@ -27,6 +27,7 @@
 		"process.h": "c",
 		"interrupts.h": "c",
 		"*.in": "c",
-		"configuration_defines.h": "c"
+		"configuration_defines.h": "c",
+		"*.inc": "c"
 	}
 }
