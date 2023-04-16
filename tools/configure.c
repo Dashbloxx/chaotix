@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
     char *arch = NULL;
     char *bootloader = NULL;
     char *model = NULL;
+    char *font = NULL;
     
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--arch") == 0 && i+1 < argc) {
@@ -54,6 +55,8 @@ int main(int argc, char *argv[]) {
             bootloader = argv[i+1];
         } else if (strcmp(argv[i], "--model") == 0 && i+1 < argc) {
             model = argv[i+1];
+        } else if (strcmp(argv[i], "--font") == 0 && i+1 < argc) {
+            font = argv[i+1];
         }
     }
     
@@ -70,6 +73,11 @@ int main(int argc, char *argv[]) {
     if (model != NULL) {
         printf("info: value after --model is: %s\n", model);
         set_key_value(argv[1], "FORM", model);
+    }
+
+    if (font != NULL) {
+        printf("info: value after --font is: %s\n", font);
+        set_key_value(argv[1], "FONT", font);
     }
     
     return 0;

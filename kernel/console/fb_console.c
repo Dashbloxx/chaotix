@@ -39,6 +39,7 @@
 
 #include "console.h"
 #include "psf.h"
+#include <common/configuration.h>
 #include <common/extra.h>
 #include <common/stdlib.h>
 #include <common/string.h>
@@ -482,7 +483,7 @@ static ring_buf input_buf;
 static mutex lock;
 
 void fb_console_init(void) {
-    font = load_psf("/usr/share/fonts/zap-vga16.psf");
+    font = load_psf(FONT);
     ASSERT_OK(font);
 
     file_description* desc = vfs_open("/dev/fb0", O_RDWR, 0);

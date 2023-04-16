@@ -14,6 +14,9 @@ export CFLAGS := \
 
 all: config kernel initrd
 
+run: config kernel initrd
+	scripts/run.sh
+
 config:
 	scripts/config.sh
 
@@ -36,9 +39,6 @@ clean:
 	for dir in $(SUBDIRS); do $(MAKE) -C $$dir $@; done
 	$(RM) -r base/root/src
 	$(RM) initrd disk_image disk/boot/kernel disk/boot/initrd
-
-run: kernel initrd
-	scripts/run.sh
 
 runsh: kernel initrd
 	scripts/run.sh shell
