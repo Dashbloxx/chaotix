@@ -26,6 +26,7 @@
 		"sound.h": "c",
 		"process.h": "c",
 		"interrupts.h": "c",
-		"*.in": "c"
+		"*.in": "c",
+		"configuration_defines.h": "c"
 	}
 }
