@@ -1,3 +1,3 @@
 #define BOOTLOADER "GRUB"
-#define ARCHITECTURE "i686"
-#define FORM "PC"
+#define ARCHITECTURE "i386"
+#define FORM "RPi"

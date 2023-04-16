@@ -1,5 +1,5 @@
 MAKEFLAGS += --jobs=$(shell nproc)
-SUBDIRS := kernel userland tool
+SUBDIRS := kernel userland tools
 
 export CFLAGS := \
 	-std=c11 \
@@ -48,6 +48,9 @@ shell: kernel initrd
 
 test: kernel initrd
 	scripts/run_tests.sh
+
+tool:
+	make -C tools
 
 toolchain:
 	scripts/toolchain.sh $(CROSS_TYPE)
