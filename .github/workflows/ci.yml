@@ -14,6 +14,10 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - run: sudo apt-get update && sudo apt-get install -y gcc-multilib wget cpio qemu-system-x86 grub2 mtools xorriso
+            - run: sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+            - run: sudo apt-get update
+            - run: sudo apt-get install libc6-dev=2.34-0ubuntu1~21.10.1
+
             - run: make CC=gcc
             - run: nm -n kernel/kernel | awk 'NF==3'
             - run: make test
