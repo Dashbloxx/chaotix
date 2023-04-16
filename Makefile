@@ -12,7 +12,10 @@ export CFLAGS := \
 
 .PHONY: all run clean $(SUBDIRS) base
 
-all: kernel initrd
+all: config kernel initrd
+
+config:
+	scripts/config.sh
 
 initrd: base
 	find $< -mindepth 1 ! -name '.gitkeep' -printf "%P\n" | sort | cpio -oc -D $< -F $@
@@ -47,5 +50,4 @@ test: kernel initrd
 	scripts/run_tests.sh
 
 toolchain:
-	scripts/toolchain.sh
-	@export PATH="/opt/i686-elf-cross/bin:$PATH"
+	scripts/toolchain.sh $(CROSS_TYPE)
