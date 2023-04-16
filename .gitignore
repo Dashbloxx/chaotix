@@ -12,4 +12,3 @@ compile_flags.txt
 **/*.iso
 /.i686-elf
 /.limine
-/chaotix.cfg
