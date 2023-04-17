@@ -4,7 +4,7 @@
 ## Screenshot
 ![](.assets/screenshot0.png "")
 ## About
-Chaotix (formerly known as Psychix or Magma) is a UNIX-like operating system written in C that uses code from [Xv6](https://github.com/mit-pdos/xv6-public) and [Yagura](https://github.com/mosmeh/yagura).
+Chaotix (formerly known as Psychix or Magma) is a UNIX-like operating system written in C & multiple-architecture assembly that uses code from [Xv6](https://github.com/mit-pdos/xv6-public) and [Yagura](https://github.com/mosmeh/yagura). It's features range from multitasking, to graphics & more!
 ## Supported architectures
 - [X] [`i?86`](https://en.wikipedia.org/wiki/X86)
 - [ ] [`ARM`](https://en.wikipedia.org/wiki/ARM_architecture_family)
