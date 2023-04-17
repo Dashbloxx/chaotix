@@ -1,6 +1,8 @@
 # Chaotix
 [![Contributions in the Last Month](https://img.shields.io/github/commit-activity/m/Dashbloxx/chaotix)](https://github.com/Dashbloxx/chaotix/commits/main)
 [![Contributors](https://img.shields.io/github/contributors/Dashbloxx/chaotix)](https://github.com/Dashbloxx/chaotix/graphs/contributors)
+## Screenshot
+![](.assets/screenshot0.png "")
 ## About
 Chaotix (formerly known as Psychix or Magma) is a UNIX-like operating system written in C that uses code from [Xv6](https://github.com/mit-pdos/xv6-public) and [Yagura](https://github.com/mosmeh/yagura).
 ## Supported architectures

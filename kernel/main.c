@@ -125,7 +125,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
      */
     serial_init();
 
-    kprintf("\x1b[32mBooted\x1b[m\n");
+    kprintf("%s%s[%s+%s] %s%sBooted%s\n", BOLD, F_CYAN, F_BLUE, F_CYAN, RESET, F_GREEN, RESET);
 
     /* The STI function is i?86-specific! */
     #if defined(__i386__)
@@ -239,7 +239,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     pit_init();
     #endif
     
-    kprintf(F_GREEN "Initialization done\x1b[m\n");
+    kprintf("%s%s[%s+%s] %s%sInitialization done%s\n", BOLD, F_CYAN, F_BLUE, F_CYAN, RESET, F_GREEN, RESET);
 
     /* Start a process called `init`, which spawns shells on all TTYs in user mode... */
     ASSERT_OK(process_spawn_kernel_process("userland_init", init));
