@@ -85,6 +85,20 @@ static void create_char_device(const char* pathname, struct inode* device) {
     ASSERT_OK(vfs_register_device(device));
 }
 
+#if defined(__x86_64__)
+static void switch_to_64bit_mode() {
+    // Set the CR4 register to enable long mode
+    asm volatile ("movq %cr4, %rax\n\t"
+                  "or $0x20, %rax\n\t"
+                  "movq %rax, %cr4");
+
+    // Load the new code segment descriptor into the CS register
+    uint64_t kernel_cs = 0x08;
+    asm volatile ("movq %0, %%rax\n\t"
+                  "movq %%rax, %%cs" : : "r" (kernel_cs));
+}
+#endif
+
 /*
  *  This function is called from assembly. Notice that this function also contains two arguments. These arguments are related to multiboot. Multiboot allows bootloaders
  *  to collect data (which the kernel can't collect), and then pass it to the kernel when jumping to it.
@@ -93,7 +107,7 @@ static void create_char_device(const char* pathname, struct inode* device) {
 void start(uint64_t dtb_ptr32, uint64_t x1, uint64_t x2, uint64_t x3) {
 #elif defined(__aarch32__) && defined(__RPi__)
 void start(uint32_t r0, uint32_t r1, uint32_t atags) {
-#elif defined(__i386__)
+#elif defined(__i386__) || defined(__x86_64__)
 void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
 #endif
     /*
@@ -102,7 +116,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
      *  When i?86 is stated, we mean i386, i486, i586, i686, or i786.
      *  Anyways, here, we run some i?86-specific stuff...
      */
-    #if defined(__i386__)
+    #if defined(__i386__) || defined(__x86_64__)
     /*
      *  Initialize the GDT (Global Descriptor Table). This is a table that can be defined as a struct in C. This struct's pointer can be given to the CPU so that it
      *  knows the characteristics (and the segments themselves) of each segment in memory.
@@ -128,7 +142,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     kprintf("%s%s[%s+%s] %s%sBooted%s\n", BOLD, F_CYAN, F_BLUE, F_CYAN, RESET, F_GREEN, RESET);
 
     /* The STI function is i?86-specific! */
-    #if defined(__i386__)
+    #if defined(__i386__) || defined(__x86_64__)
     sti();
     #endif
 
@@ -150,11 +164,19 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
      *  mechanism for i?86 only for now since setting up paging in other
      *  architectures isn't the top priority now...
      */
-    #if defined(__i386__)
+    #if defined(__i386__) || defined(__x86_64__)
     /*
      *  Initialize paging. Paging is a mechanism found in the x86 & x86_64 architecture (x86 & x86_64 specific) which allows to be more memory efficient.
      */
     paging_init(mb_info);
+    #endif
+
+    #if defined(__x86_64__)
+    /*
+     *  Switch to long mode. Switching to long mode will make the CPU run in 64-bits, allowing for more memory to be
+     *  addressed aswell as bigger numbers!
+     */
+    switch_to_64bit_mode();
     #endif
 
     ASSERT_OK(vfs_mount(ROOT_DIR, tmpfs_create_root()));
@@ -197,7 +219,7 @@ void start(uint32_t mb_magic, uintptr_t mb_info_paddr) {
     #endif
 
     /*
-     *  AC97 isn't really common on other architectures, therefore we just make this a i?86-only thing.
+     *  AC97 isn't really common on other architectures, therefore we just make this a i?86-only thing (for now).
      */
     #if defined(__i386__)
     /*
