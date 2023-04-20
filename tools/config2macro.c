@@ -15,13 +15,13 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "%susage: %sconfig2macro %s<%sconfig_file%s>%s\n", F_MAGENTA, F_GREEN, F_BLUE, F_GREEN, F_BLUE, RESET);
+        printf("%susage: %sconfig2macro %s<%sconfig_file%s>%s\n", F_MAGENTA, F_GREEN, F_BLUE, F_GREEN, F_BLUE, RESET);
         return 1;
     }
 
     FILE* file = fopen(argv[1], "r");
     if (file == NULL) {
-        fprintf(stderr, "error: cannot open file '%s'\n", argv[1]);
+        printf("error: cannot open file '%s'\n", argv[1]);
         return 1;
     }
 
