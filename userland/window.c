@@ -64,6 +64,14 @@
 #define RGBA(r, g, b, a) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define RGB(r, g, b) RGBA(r, g, b, 255U)
 
+/* Define the different instances of the window system... */
+enum {
+    display
+};
+
+/* Contain the instance type of the window system... */
+int mode;
+
 /* This struct defines the info for a virtual framebuffer, which is a framebuffer that can be embedded inside a physical framebuffer... */
 typedef struct {
     int width;
@@ -285,16 +293,6 @@ int paint_window(int index, int pos_x, int pos_y, int size_x, int size_y, const 
 
 drawrest:
 
-    /* 
-     *  Check for a virtual framebuffer index that isn't currently used, and then return if there is an error, if not, create a new
-     *  thread, and initialize the virtual framebuffer, and then loop the process of copying the virtual framebuffer to the physical
-     *  framebuffer in the new thread. Then, return the index of the new virtual framebuffer...
-     */
-    // int index = get_free_vfb_index();
-    // if(index == -1) {
-    //     return -1;
-    // }
-
     init_vfb(index, pos_x + 4, pos_y + 25, size_x - 1, size_y - 22);
     copy_to_physfb(index);
     return index;
@@ -329,44 +327,47 @@ void translate_vfb(uint32_t vfb_index, uint32_t x, uint32_t y, uint32_t width, u
 }
 
 int main() {
-    /*
-     *  Here we open the framebuffer character device, and get a pointer to the framebuffer. After getting a pointer to the framebuffer, we simply close the
-     *  the framebuffer character device, and start using the framebuffer pointer to draw to the framebuffer.
-     */
-    int fd = open("/dev/fb0", O_RDWR);
-    if (fd < 0) {
-        if (errno == ENOENT)
-            dprintf(STDERR_FILENO, "%serror: %sframebuffer is not available%s\n", F_RED, F_YELLOW, RESET);
-        else
-            perror("open");
-        return EXIT_FAILURE;
-    }
-    if (ioctl(fd, FBIOGET_INFO, &_fb_info) < 0) {
-        perror("ioctl");
-        return EXIT_FAILURE;
-    }
-    fb = mmap(NULL, _fb_info.pitch * _fb_info.height, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    if (fb == MAP_FAILED) {
-        perror("mmap");
-        return EXIT_FAILURE;
-    }
-    close(fd);
-
-    /*
-     *  Now we can actually use `fb` to draw to the framebuffer and do much more!
-     */
-    int index = get_free_vfb_index();
-    if(index == -1) {
-        return -1;
-    }
-    paint_window(index, 25, 25, 400, 100, "Hello, world!");
-
-    for(int x = 0; x <= 10; x++) {
-        for(int y = 0; y <= 10; y++) {
-            draw_to_vfb(index, x, y, RGB(255, 255, 255));
+    if(fork() == 0) {
+        mode = display;
+        /*
+         *  Here we open the framebuffer character device, and get a pointer to the framebuffer. After getting a pointer to the framebuffer, we simply close the
+         *  the framebuffer character device, and start using the framebuffer pointer to draw to the framebuffer.
+         */
+        int fd = open("/dev/fb0", O_RDWR);
+        if (fd < 0) {
+            if (errno == ENOENT)
+                dprintf(STDERR_FILENO, "%serror: %sframebuffer is not available%s\n", F_RED, F_YELLOW, RESET);
+            else
+                perror("open");
+            return EXIT_FAILURE;
         }
+        if (ioctl(fd, FBIOGET_INFO, &_fb_info) < 0) {
+            perror("ioctl");
+            return EXIT_FAILURE;
+        }
+        fb = mmap(NULL, _fb_info.pitch * _fb_info.height, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        if (fb == MAP_FAILED) {
+            perror("mmap");
+            return EXIT_FAILURE;
+        }
+        close(fd);
+
+        /*
+        *  Now we can actually use `fb` to draw to the framebuffer and do much more!
+        */
+        int index = get_free_vfb_index();
+        if(index == -1) {
+            return -1;
+        }
+        paint_window(index, 25, 25, 400, 100, "Hello, world!");
+
+        for(int x = 0; x <= 10; x++) {
+            for(int y = 0; y <= 10; y++) {
+                draw_to_vfb(index, x, y, RGB(255, 255, 255));
+            }
+        }
+        copy_to_physfb(index);
     }
-    copy_to_physfb(index);
 
     getchar();
     return EXIT_SUCCESS;
