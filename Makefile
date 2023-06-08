@@ -1,3 +1,5 @@
+include Config.mk
+
 MAKEFLAGS += --jobs=$(shell nproc)
 SUBDIRS := kernel userland tools
 
@@ -8,17 +10,15 @@ export CFLAGS := \
 	-nostdlib -ffreestanding \
 	-U_FORTIFY_SOURCE \
 	-Wall -Wextra -pedantic \
-	-O2 -g
+	-O2 -g \
+	$(CONFIG)
 
 .PHONY: all run clean $(SUBDIRS) base
 
-all: config kernel initrd
+all: kernel initrd
 
-run: config kernel initrd
+run: kernel initrd
 	scripts/run.sh
-
-config:
-	scripts/config.sh
 
 initrd: base
 	find $< -mindepth 1 ! -name '.gitkeep' -printf "%P\n" | sort | cpio -oc -D $< -F $@

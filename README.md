@@ -15,6 +15,7 @@ Chaotix (formerly known as Psychix or Magma) is a UNIX-like operating system wri
 64-bit ISAs will be supported later, but first we want to support the basic 32-bit architectures...
 ## Building
 Building chaotix is easy. First of all, you'll need a `i686-elf` toolchain (if you don't have the toolchain, use chaotix's toolchain script which builds it for you). After that, simply run `make`. That builds the entire operating system (the kernel, libc, and the userland binaries).
+If you change the configuration (Config.mk), you must run `make clean` to clean all built source code, and then build by running `make`.
 ## Testing & exporting
 After building chaotix, you can test it and/or export it as a CD-ROM image. Chaotix supports using limine bootloader or GRUB bootloader. GRUB bootloader is the default option!
 ### Testing

@@ -77,7 +77,7 @@ all: $(BIN_TARGETS)
 
 $(BIN_TARGETS): $(OUTDIR)/% : %.o $(LIB_TARGET)
 	@echo "[LD] $@"
-	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -lc
+	@$(CC) $(CFLAGS) $(CONFIG) $(LDFLAGS) -o $@ $< -lc
 
 $(LIB_TARGET): $(LIB_OBJS)
 	@echo "[AR] $@"
@@ -85,7 +85,7 @@ $(LIB_TARGET): $(LIB_OBJS)
 
 .c.o:
 	@echo "[CC] $<"
-	@$(CC) $(CFLAGS) -MMD -MP -c -o $@ $<
+	@$(CC) $(CFLAGS) $(CONFIG) -MMD -MP -c -o $@ $<
 
 clean:
 	$(RM) $(BIN_TARGETS) $(BIN_TARGET_OBJS) $(BIN_TARGET_DEPS) $(LIB_TARGET) $(LIB_OBJS) $(LIB_DEPS)

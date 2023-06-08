@@ -39,7 +39,6 @@
 
 #include "console.h"
 #include "psf.h"
-#include <common/configuration.h>
 #include <common/extra.h>
 #include <common/stdlib.h>
 #include <common/string.h>

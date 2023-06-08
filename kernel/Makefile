@@ -1,6 +1,9 @@
+include ../Config.mk
+
 CFLAGS += \
 	-ffreestanding \
-	-isystem..
+	-isystem.. \
+	$(CONFIG)
 
 TARGET := kernel
 
